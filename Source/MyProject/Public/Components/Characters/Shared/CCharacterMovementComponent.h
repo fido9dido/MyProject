@@ -6,15 +6,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CCharacterMovementComponent.generated.h"
 
-UENUM(BlueprintType)
-enum class ECLocomotionState : uint8
-{
-	Idle,
-	Walk,
-	Jog,
-	Jump
-};
-
 /**
  * 
  */
@@ -22,8 +13,7 @@ UCLASS()
 class MYPROJECT_API UCCharacterMovementComponent : public UCharacterMovementComponent
 {
 	GENERATED_BODY()
-public:
-	ECLocomotionState CurrentLocomotionState = ECLocomotionState::Idle;
+
 protected:
 	// ConstraintInputAcceleration will interpolate the input size to go from this value to 1.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

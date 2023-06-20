@@ -8,6 +8,9 @@
 #include <MassActorSubsystem.h>
 #include <MassCommonTypes.h>
 #include <StateTreeTypes.h>
+#include <MassMovementFragments.h>
+#include <Animation/CClusterAnimationInstance.h>
+#include <Fragments/LocomotionFragment.h>
 
 UCClusterUpdateProcessor::UCClusterUpdateProcessor() : EntityQuery(*this)
 {
@@ -22,57 +25,65 @@ void UCClusterUpdateProcessor::ConfigureQueries()
 {
 	EntityQuery.AddRequirement<FMassActorFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddRequirement<FMassStateTreeInstanceFragment>(EMassFragmentAccess::ReadWrite);
+	EntityQuery.AddRequirement<FLocomotionFragment>(EMassFragmentAccess::ReadOnly);
+	EntityQuery.AddRequirement<FMassVelocityFragment>(EMassFragmentAccess::ReadOnly);
 	EntityQuery.AddSubsystemRequirement<UMassStateTreeSubsystem>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddConstSharedRequirement<FMassStateTreeSharedFragment>();
 }
 
 void UCClusterUpdateProcessor::Execute(FMassEntityManager& entityManager, FMassExecutionContext& context)
 {
-	//TODO handle state from AI when it's implement in C++
+	EntityQuery.ForEachEntityChunk(entityManager, context, std::bind(&UCClusterUpdateProcessor::Tick, this, std::placeholders::_1));
+}
 
-	EntityQuery.ForEachEntityChunk(entityManager, context, [this](FMassExecutionContext& context)
+void UCClusterUpdateProcessor::Tick(FMassExecutionContext& context)
+{
+	if (context.GetConstSharedFragmentPtr<FMassStateTreeSharedFragment>() == nullptr) { return; }
+
+	const TConstArrayView<FMassStateTreeInstanceFragment> stateTreeInstanceList = context.GetFragmentView<FMassStateTreeInstanceFragment>();
+	const TConstArrayView<FMassVelocityFragment> velocityFragmentList = context.GetFragmentView<FMassVelocityFragment>();
+	const TConstArrayView<FLocomotionFragment> locomotionFragmentList = context.GetFragmentView<FLocomotionFragment>();
+	const TArrayView<FMassActorFragment> actorFragmentList = context.GetMutableFragmentView<FMassActorFragment>();
+
+	const int32 numEntities = context.GetNumEntities();
+
+	UMassStateTreeSubsystem& massStateTreeSubsystem = context.GetMutableSubsystemChecked<UMassStateTreeSubsystem>();
+
+	for (int32 i = 0; i < numEntities; ++i)
+	{
+		AActor* actor = actorFragmentList[i].GetMutable();
+
+		if (!actor) { continue; }
+
+		FStateTreeInstanceData* stateTreeInstanceData = massStateTreeSubsystem.GetInstanceData(stateTreeInstanceList[i].InstanceHandle);
+		const FStateTreeExecutionState* executionState = stateTreeInstanceData->GetExecutionState();
+		if (!executionState || executionState->ActiveStates.IsEmpty()) { continue; }
+		
+		const FMassStateTreeSharedFragment& sharedStateTree = context.GetConstSharedFragment<FMassStateTreeSharedFragment>();
+		const FStateTreeStateHandle& stateHandle = executionState->ActiveStates.Last();
+		const FCompactStateTreeState* stateData = sharedStateTree.StateTree->GetStateFromHandle(stateHandle);
+		FMassVelocityFragment velocityFragment = velocityFragmentList[i];
+
+
+		ACNPCCharacter* character = Cast<ACNPCCharacter>(actor);
+		
+		UCCharacterMovementComponent* movementComponent = Cast<UCCharacterMovementComponent>(character->GetMovementComponent());
+		movementComponent->Velocity = velocityFragment.Value;
+
+		UAnimInstance* skeletalMeshComponent = character->GetSkeletalMeshComponent()->GetAnimInstance();
+		UCClusterAnimationInstance* clusterAnimInstance = Cast<UCClusterAnimationInstance>(skeletalMeshComponent);
+		
+		if (clusterAnimInstance && stateData)
 		{
-			if (context.GetConstSharedFragmentPtr<FMassStateTreeSharedFragment>() == nullptr) { return; }
-
-			const TConstArrayView<FMassStateTreeInstanceFragment> stateTreeInstanceList = context.GetFragmentView<FMassStateTreeInstanceFragment>();
-			const TArrayView<FMassActorFragment> actorFragments = context.GetMutableFragmentView<FMassActorFragment>();
-
-			const int32 numEntities = context.GetNumEntities();
-
-			UMassStateTreeSubsystem& massStateTreeSubsystem = context.GetMutableSubsystemChecked<UMassStateTreeSubsystem>();
-
-			for (int32 i = 0; i < numEntities; ++i)
+			if (stateData->Name.IsEqual(FName(TEXT("Patrol"))))
 			{
-				const FMassStateTreeSharedFragment& sharedStateTree = context.GetConstSharedFragment<FMassStateTreeSharedFragment>();
-				FStateTreeInstanceData* stateTreeInstanceData = massStateTreeSubsystem.GetInstanceData(stateTreeInstanceList[i].InstanceHandle);
-				const FStateTreeExecutionState* executionState = stateTreeInstanceData->GetExecutionState();
-				if (!executionState || executionState->ActiveStates.IsEmpty()) { continue; }
-
-
-				const FStateTreeStateHandle& stateHandle = executionState->ActiveStates.Last();
-				const FCompactStateTreeState* stateData = sharedStateTree.StateTree->GetStateFromHandle(stateHandle);
-
-				AActor* actor = actorFragments[i].GetMutable();
-				if (!actor) { continue; }
-				ACNPCCharacter* character = Cast<ACNPCCharacter>(actor);
-				UCCharacterMovementComponent* movementComponent = Cast<UCCharacterMovementComponent>(character->GetMovementComponent());
-
-				if (stateData)
-				{
-					if (stateData->Name.IsEqual(FName(TEXT("Idle"))))
-					{
-						movementComponent->Velocity = FVector::Zero();
-
-						//TODO handle state from AI when it's implement in C++
-						movementComponent->CurrentLocomotionState = ECLocomotionState::Idle;
-					}
-					else if (stateData->Name.IsEqual(FName(TEXT("Jog"))))
-					{
-						movementComponent->CurrentLocomotionState = ECLocomotionState::Jog;
-					}
-				}
+				clusterAnimInstance->SetLocomotionState(ECLocomotionState::Jog);
 			}
-		});
-			
+			else
+			{
+				clusterAnimInstance->SetLocomotionState(ECLocomotionState::Idle);
+			}
+		}
+	}
 }
 

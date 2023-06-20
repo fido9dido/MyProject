@@ -25,6 +25,7 @@ public class MyProject : ModuleRules
             ,"MassCommon"
             ,"MassNavigation"
             ,"MassCrowd"
+            ,"MassSignals"
             ,"MassAIBehavior"
             ,"MassActors"
             ,"MassMovement"
@@ -39,6 +40,9 @@ public class MyProject : ModuleRules
 
             ,"StateTreeModule"
             ,"StateTreeEditorModule"
+
+
+            ,"NavigationSystem"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] { });

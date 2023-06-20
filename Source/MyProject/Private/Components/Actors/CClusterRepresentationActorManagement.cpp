@@ -13,7 +13,7 @@ EMassActorSpawnRequestAction UCClusterRepresentationActorManagement::OnPostActor
 
 	const EMassActorSpawnRequestAction result = Super::OnPostActorSpawn(spawnRequestHandle, spawnRequest, entitySubsystem);
 	
-	const FMassActorSpawnRequest& massActorSpawnRequest = spawnRequest.Get<FMassActorSpawnRequest>();
+	const FMassActorSpawnRequest& massActorSpawnRequest = spawnRequest.Get<const FMassActorSpawnRequest>();
 	checkf(massActorSpawnRequest.SpawnedActor, TEXT("Expecting valid spawned actor"));
 
 	if (IClusterActor* bulkActorInterface = Cast<IClusterActor>(massActorSpawnRequest.SpawnedActor))

@@ -22,4 +22,6 @@ protected:
 	virtual void ConfigureQueries() override;
 	virtual void Execute(FMassEntityManager& EntityManager, FMassExecutionContext& Context) override;
 
+	void Tick(FMassExecutionContext& context);
+
 };

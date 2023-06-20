@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include <Characters/Shared/CCharacterMovementComponent.h>
+#include "Globals/GlobalTypes.h"
 #include "CClusterAnimationInstance.generated.h"
 
 class ACNPCCharacter;
@@ -61,6 +62,8 @@ public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	virtual void NativePostEvaluateAnimation() override;
+
+	void SetLocomotionState(const ECLocomotionState locomotionState) { LocomotionState = locomotionState; }
 
 	UFUNCTION(BlueprintPure, Category = "Locomotion")
 	void GetMoveState(EMassMovementAction& OutCurrentMovementAction, EMassMovementAction& OutPreviousMovementAction) const;
