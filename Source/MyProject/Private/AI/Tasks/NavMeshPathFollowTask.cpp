@@ -5,6 +5,7 @@
 #include <MassStateTreeExecutionContext.h>
 #include <NavigationSystem.h>
 #include <StateTreeLinker.h>
+#include "Globals/CUtility.h"
 
 FNavMeshPathFollowTask::FNavMeshPathFollowTask()
 {
@@ -22,18 +23,27 @@ bool FNavMeshPathFollowTask::Link(FStateTreeLinker& linker)
 }
 
 EStateTreeRunStatus FNavMeshPathFollowTask::EnterState(FStateTreeExecutionContext& context, const FStateTreeTransitionResult& Transition) const
-{	
+{
+	FNavMeshFragment& navMeshFragment = context.GetExternalData(NavMeshFragmentHandle);
+
 	// Tick doesn't seem to be called when we enter State, so we call it manually
 	return Tick(context, 0.f);
 }
 
 EStateTreeRunStatus FNavMeshPathFollowTask::Tick(FStateTreeExecutionContext& context, const float deltaTime) const
 {
+	FNavMeshFragment& navMeshFragment = context.GetExternalData(NavMeshFragmentHandle);
+
+	if (navMeshFragment.bPathDone) 
+	{
+		navMeshFragment.bPathDone = false;
+		return EStateTreeRunStatus::Succeeded;
+	}
+
 	FMassStateTreeExecutionContext& massContext = static_cast<FMassStateTreeExecutionContext&>(context);
 	const FAgentRadiusFragment& agentRadius = context.GetExternalData(AgentRadiusHandle);
 	FMassMoveTargetFragment& moveTarget = context.GetExternalData(MoveTargetHandle);
 	FMoveTaskInstanceData& instanceData = context.GetInstanceData<FMoveTaskInstanceData>(*this);
-	FNavMeshFragment& navMeshFragment = context.GetExternalData(NavMeshFragmentHandle);
 
 	const FMassMovementParameters& movementParams = context.GetExternalData(MovementParamsHandle);
 
@@ -78,6 +88,7 @@ EStateTreeRunStatus FNavMeshPathFollowTask::Tick(FStateTreeExecutionContext& con
 				const TArray<FNavPathPoint>& pathPoints = navigationPath->GetPathPoints();
 
 				navMeshFragment.NextPathNodePos = pathPoints[1].Location;
+				
 			} 
 			else 
 			{
@@ -87,11 +98,12 @@ EStateTreeRunStatus FNavMeshPathFollowTask::Tick(FStateTreeExecutionContext& con
 			
 			if (moveTarget.DistanceToGoal < agentRadius.Radius)
 			{
+				navMeshFragment.bPathDone = false;
 				return EStateTreeRunStatus::Succeeded;
 			}
 
 #if WITH_EDITOR
-			navigationPath->DebugDraw(query.NavData.Get(), FColor::MakeRandomColor(), context.GetWorld()->GetCanvasForRenderingToTarget(), false, 10.0f);
+			CUtility::DrawDebugPath(massContext.GetWorld(), navigationPath->GetPathPoints(), FColor::MakeRandomColor(), context.GetWorld()->GetCanvasForRenderingToTarget(), false, 10.0f);
 #endif
 		}
 		else

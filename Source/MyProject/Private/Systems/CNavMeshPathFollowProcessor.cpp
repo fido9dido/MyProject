@@ -75,6 +75,7 @@ void UCNavMeshPathFollowProcessor::Tick(FMassExecutionContext& context)
 
 			if (distanceToNextGoal < navMesh.Tolerance)
 			{
+				navMesh.bPathDone = true;
 				EntitiesToSignalPathDone.Add(context.GetEntity(i));
 			}
 		}

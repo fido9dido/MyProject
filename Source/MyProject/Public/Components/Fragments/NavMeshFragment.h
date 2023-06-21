@@ -21,6 +21,8 @@ public:
 	//Tolerance is initalized and added to agent size
 	UPROPERTY(EditAnywhere)
 	float Tolerance = 10;
+
+	bool bPathDone = true;
 };
 
 UCLASS()
