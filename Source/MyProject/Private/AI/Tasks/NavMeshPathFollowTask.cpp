@@ -21,6 +21,12 @@ bool FNavMeshPathFollowTask::Link(FStateTreeLinker& linker)
 	return true;
 }
 
+EStateTreeRunStatus FNavMeshPathFollowTask::EnterState(FStateTreeExecutionContext& context, const FStateTreeTransitionResult& Transition) const
+{	
+	// Tick doesn't seem to be called when we enter State, so we call it manually
+	return Tick(context, 0.f);
+}
+
 EStateTreeRunStatus FNavMeshPathFollowTask::Tick(FStateTreeExecutionContext& context, const float deltaTime) const
 {
 	FMassStateTreeExecutionContext& massContext = static_cast<FMassStateTreeExecutionContext&>(context);

@@ -54,11 +54,12 @@ public:
 	FNavMeshPathFollowTask();
 
 protected:
-
+	
 	virtual const UStruct* GetInstanceDataType() const override { return FMoveTaskInstanceData::StaticStruct(); };
 
 	[[nodiscard]] virtual bool Link(FStateTreeLinker& linker) override;
-	
+	virtual EStateTreeRunStatus EnterState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const override;
+
 	virtual EStateTreeRunStatus Tick(FStateTreeExecutionContext& context, const float deltaTime) const;
 
 };
