@@ -11,6 +11,7 @@
 #include <MassNavigationFragments.h>
 #include <MassMovementFragments.h>
 #include <Fragments/NavMeshFragment.h>
+#include <MassActorSubsystem.h>
 
 #include "NavMeshPathFollowTask.generated.h"
 
@@ -45,11 +46,12 @@ protected:
 	TStateTreeExternalDataHandle<FAgentRadiusFragment> AgentRadiusHandle;
 	TStateTreeExternalDataHandle<FMassMovementParameters> MovementParamsHandle;
 	TStateTreeExternalDataHandle<FNavMeshFragment> NavMeshFragmentHandle;
+	TStateTreeExternalDataHandle<FMassActorFragment> MassActorFragmentHandle;
 
 	//agent radius is added to tolerance and we use it to complete task
 	UPROPERTY(EditAnywhere)
 	float Tolerance = 10.f;
-
+	
 public:	 
 	FNavMeshPathFollowTask();
 
@@ -61,5 +63,9 @@ protected:
 	virtual EStateTreeRunStatus EnterState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const override;
 
 	virtual EStateTreeRunStatus Tick(FStateTreeExecutionContext& context, const float deltaTime) const;
+
+	[[nodiscard]] EStateTreeRunStatus RequetNewPath(FStateTreeExecutionContext& context) const;
+
+	[[nodiscard]] EStateTreeRunStatus UpdateMoveTarget(FStateTreeExecutionContext& context) const;
 
 };

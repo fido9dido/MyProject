@@ -8,21 +8,32 @@
 
 #include "NavMeshFragment.generated.h"
 
-
 USTRUCT()
 struct MYPROJECT_API FNavMeshFragment : public FMassFragment
 {
 	GENERATED_BODY()
 
 public:
-	FVector NextPathNodePos;
-	int NextPathNodeIndex;
-
+	
 	//Tolerance is initalized and added to agent size
 	UPROPERTY(EditAnywhere)
 	float Tolerance = 10;
 
-	bool bPathDone = true;
+	//maybe add it in a seperate fragment "CPathCache"
+	TArray<FNavPathPoint> PathPoints;
+	int32 NextPathNodeIndex = -1;
+
+public:
+	void ResetPathCache()
+	{ 
+		PathPoints.Reset();
+		NextPathNodeIndex = -1;
+	}
+	void SetNewPathCache(const TArray<FNavPathPoint>& path, const int32 nextPathNodeIndex)
+	{
+		PathPoints = path;
+		NextPathNodeIndex = nextPathNodeIndex;
+	}
 };
 
 UCLASS()

@@ -43,6 +43,7 @@ public class MyProject : ModuleRules
 
 
             ,"NavigationSystem"
+            ,"AIModule"
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] { });

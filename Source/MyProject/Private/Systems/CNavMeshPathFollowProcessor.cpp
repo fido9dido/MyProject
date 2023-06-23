@@ -59,25 +59,23 @@ void UCNavMeshPathFollowProcessor::Tick(FMassExecutionContext& context)
 	for (int32 i = 0; i < context.GetNumEntities(); ++i)
 	{
 
-		FNavMeshFragment& navMesh = navMeshFragmentList[i];
-		FMassVelocityFragment& velocity = velocityFragmentList[i];
-		FMassMoveTargetFragment& moveTarget = moveTargetFragmentList[i];
+		FNavMeshFragment& navMeshFragment = navMeshFragmentList[i];
+		FMassVelocityFragment& velocityFragment = velocityFragmentList[i];
+		FMassMoveTargetFragment& moveTargetFragment = moveTargetFragmentList[i];
 		const FTransform& agentTransform = transformFragmentList[i].GetTransform();
-		
-		FVector direction = (navMesh.NextPathNodePos - agentTransform.GetLocation()).GetSafeNormal();
-		velocity.Value = direction * moveTarget.DesiredSpeed.Get();
-				  
-		if (moveTarget.GetCurrentAction() == EMassMovementAction::Move)
+
+		FVector direction = (moveTargetFragment.Center - agentTransform.GetLocation()).GetSafeNormal();
+
+		velocityFragment.Value = direction * moveTargetFragment.DesiredSpeed.Get();
+
+		moveTargetFragment.DistanceToGoal = (moveTargetFragment.Center - agentTransform.GetLocation()).Length();
+
+		const float distanceToNextGoal = (moveTargetFragment.Center - agentTransform.GetLocation()).Length();
+
+		if (distanceToNextGoal < navMeshFragment.Tolerance)
 		{
-			moveTarget.DistanceToGoal = (moveTarget.Center - agentTransform.GetLocation()).Length();
-
-			const float distanceToNextGoal = (navMesh.NextPathNodePos - agentTransform.GetLocation()).Length();
-
-			if (distanceToNextGoal < navMesh.Tolerance)
-			{
-				navMesh.bPathDone = true;
-				EntitiesToSignalPathDone.Add(context.GetEntity(i));
-			}
+			EntitiesToSignalPathDone.Add(context.GetEntity(i));
 		}
 	}
 }
+

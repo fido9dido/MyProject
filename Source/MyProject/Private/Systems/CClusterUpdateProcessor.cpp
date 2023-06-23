@@ -17,6 +17,7 @@ UCClusterUpdateProcessor::UCClusterUpdateProcessor() : EntityQuery(*this)
 	bAutoRegisterWithProcessingPhases = true;
 	ExecutionFlags = (int32)(EProcessorExecutionFlags::Client | EProcessorExecutionFlags::Standalone);
 	ExecutionOrder.ExecuteInGroup = UE::Mass::ProcessorGroupNames::Behavior;
+	ExecutionOrder.ExecuteAfter.Add(UE::Mass::ProcessorGroupNames::Avoidance);
 	ExecutionOrder.ExecuteAfter.Add(TEXT("MassStateTreeProcessor"));
 	bRequiresGameThreadExecution = true;
 }
@@ -26,7 +27,8 @@ void UCClusterUpdateProcessor::ConfigureQueries()
 	EntityQuery.AddRequirement<FMassActorFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddRequirement<FMassStateTreeInstanceFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddRequirement<FLocomotionFragment>(EMassFragmentAccess::ReadOnly);
-	EntityQuery.AddRequirement<FMassVelocityFragment>(EMassFragmentAccess::ReadOnly);
+	EntityQuery.AddRequirement<FMassVelocityFragment>(EMassFragmentAccess::ReadWrite);
+	EntityQuery.AddRequirement<FMassForceFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddSubsystemRequirement<UMassStateTreeSubsystem>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddConstSharedRequirement<FMassStateTreeSharedFragment>();
 }
@@ -41,9 +43,10 @@ void UCClusterUpdateProcessor::Tick(FMassExecutionContext& context)
 	if (context.GetConstSharedFragmentPtr<FMassStateTreeSharedFragment>() == nullptr) { return; }
 
 	const TConstArrayView<FMassStateTreeInstanceFragment> stateTreeInstanceList = context.GetFragmentView<FMassStateTreeInstanceFragment>();
-	const TConstArrayView<FMassVelocityFragment> velocityFragmentList = context.GetFragmentView<FMassVelocityFragment>();
 	const TConstArrayView<FLocomotionFragment> locomotionFragmentList = context.GetFragmentView<FLocomotionFragment>();
 	const TArrayView<FMassActorFragment> actorFragmentList = context.GetMutableFragmentView<FMassActorFragment>();
+	TArrayView<FMassVelocityFragment> velocityFragmentList = context.GetMutableFragmentView<FMassVelocityFragment>();
+	TArrayView<FMassForceFragment> forceListFragment = context.GetMutableFragmentView<FMassForceFragment>();
 
 	const int32 numEntities = context.GetNumEntities();
 
@@ -62,14 +65,12 @@ void UCClusterUpdateProcessor::Tick(FMassExecutionContext& context)
 		const FMassStateTreeSharedFragment& sharedStateTree = context.GetConstSharedFragment<FMassStateTreeSharedFragment>();
 		const FStateTreeStateHandle& stateHandle = executionState->ActiveStates.Last();
 		const FCompactStateTreeState* stateData = sharedStateTree.StateTree->GetStateFromHandle(stateHandle);
-		FMassVelocityFragment velocityFragment = velocityFragmentList[i];
-
-
+		FMassVelocityFragment& velocityFragment = velocityFragmentList[i];
+		FMassForceFragment& forceFragment = forceListFragment[i];
 		ACNPCCharacter* character = Cast<ACNPCCharacter>(actor);
 		
 		UCCharacterMovementComponent* movementComponent = Cast<UCCharacterMovementComponent>(character->GetMovementComponent());
-		movementComponent->Velocity = velocityFragment.Value;
-
+		const float speed = velocityFragment.Value.Length();
 		UAnimInstance* skeletalMeshComponent = character->GetSkeletalMeshComponent()->GetAnimInstance();
 		UCClusterAnimationInstance* clusterAnimInstance = Cast<UCClusterAnimationInstance>(skeletalMeshComponent);
 		
@@ -77,11 +78,18 @@ void UCClusterUpdateProcessor::Tick(FMassExecutionContext& context)
 		{
 			if (stateData->Name.IsEqual(FName(TEXT("Patrol"))))
 			{
+				movementComponent->Velocity = velocityFragment.Value;
 				clusterAnimInstance->SetLocomotionState(ECLocomotionState::Jog);
 			}
-			else
-			{
+			else if (stateData->Name.IsEqual(FName(TEXT("Idle"))))
+			{	 
+				// temporary fix until I fix avoidance, currently avoidance mutate these values making character moves when they are standing
+				velocityFragment.Value = FVector::ZeroVector;
+				forceFragment.Value = FVector::ZeroVector;
+
+				movementComponent->Velocity = FVector::ZeroVector;
 				clusterAnimInstance->SetLocomotionState(ECLocomotionState::Idle);
+
 			}
 		}
 	}
