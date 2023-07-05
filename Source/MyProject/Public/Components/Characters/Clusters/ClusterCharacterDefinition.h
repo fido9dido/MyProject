@@ -11,17 +11,16 @@
 
 #include "ClusterCharacterDefinition.generated.h"
 
-
 USTRUCT(BlueprintType)
 struct MYPROJECT_API FClusterMeshDefinition
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSoftObjectPtr<USkeletalMesh> Mesh;
+	USkeletalMesh* Mesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSoftObjectPtr<UCAnimationDataAsset> AnimationData;
+	UCAnimationDataAsset* AnimationData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float CapsuleHeight;
@@ -34,33 +33,16 @@ USTRUCT(BlueprintType)
 struct MYPROJECT_API FClusterCharacterDefinition
 {
 	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FClusterMeshDefinition MeshDefinition;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float ScaleFactor = 1.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 RayTracingMinLOD = -1;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSoftObjectPtr<UDataAsset> LocomotionAnimSet;
-
-public:
-
-	FClusterCharacterDefinition() = default;
-
-};
-
-USTRUCT(BlueprintType)
-struct MYPROJECT_API FSkeletalMeshData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FClusterMeshDefinition MeshDefinition;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32	CharacterCount = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float ScaleFactor = 1.0f;
+
+	//TODO add a Statetree Here!
 };
+

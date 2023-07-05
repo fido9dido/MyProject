@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "Characters/Clusters/ClusterCharacterDefinition.h"
+#include "Characters/Clusters/CClusterDefinitionDataAsset.h"
 #include "MassEntityTypes.h"
 #include "MassObserverProcessor.h"
 
@@ -18,10 +19,24 @@ struct MYPROJECT_API FClusterVisualizationFragment : public FMassFragment
 	GENERATED_BODY()
 
 public:
-	
+
+	int32 CharacterDefinitionID = -1;
+
 	// Visible for debugging purposes
 	UPROPERTY(VisibleAnywhere)
 	float CapsuleHeight;
+
+};
+
+USTRUCT()
+struct MYPROJECT_API FClusterDataAssetSharedFragment : public FMassSharedFragment
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, Category = "Character")
+	TObjectPtr<UCClusterDefinitionDataAsset> ClusterDefinitionData;
 
 };
 

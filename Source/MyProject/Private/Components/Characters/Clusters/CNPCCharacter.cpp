@@ -6,6 +6,7 @@
 #include "UObject/ObjectSaveContext.h"
 #include "MassAgentComponent.h"
 #include "Systems/CClusterSettings.h"
+#include "Fragments/ClusterVisualizationFragment.h"
 #include "MassMovementFragments.h"
 #include <Components/CapsuleComponent.h>
 #include <MassEntityConfigAsset.h>
@@ -40,33 +41,6 @@ void ACNPCCharacter::PostInitProperties()
 	}
 }
 
-void ACNPCCharacter::OnConstruction(const FTransform& transform)
-{
-	Super::OnConstruction(transform);
-
-	if (!HasAnyFlags(RF_ClassDefaultObject) && bShouldBuildOnConstruct)
-	{
-		BuildCharacter();
-	}
-}
-
-#if WITH_EDITOR
-void ACNPCCharacter::PostEditChangeProperty(FPropertyChangedEvent& propertyChangedEvent)
-{
-	if (FProperty* memberProperty = propertyChangedEvent.MemberProperty)
-	{
-		const FName memberPropertyName = memberProperty->GetFName();
-
-		if (memberPropertyName == GET_MEMBER_NAME_CHECKED(ACNPCCharacter, ClusterCharacterData))
-		{
-			BuildCharacter();
-		}
-	}
-
-	Super::PostEditChangeProperty(propertyChangedEvent);
-}
-#endif
-
 void ACNPCCharacter::PreSave(FObjectPreSaveContext objectSaveContext)
 {
 	USkeletalMeshComponent* BaseMesh = GetMesh();
@@ -83,28 +57,18 @@ void ACNPCCharacter::PreSave(FObjectPreSaveContext objectSaveContext)
 	Super::PreSave(objectSaveContext);
 }
 
-void ACNPCCharacter::BuildCharacter()
-{
-	if(ClusterCharacterData) 
-	{
-		FClusterCharacterDefinition characterDefinition = ClusterCharacterData->GetCharacterDefinition();
-	
-		BuildCharacterFromDefinition(characterDefinition);
-	}
-}
-
-void ACNPCCharacter::BuildCharacterFromDefinition(const FClusterCharacterDefinition& inCharacterDefinition)
+void ACNPCCharacter::BuildCharacterFromDefinition(const FClusterCharacterDefinition& characterDefinition)
 {
 	// Adjust Capsule dimensions
 	if (UCapsuleComponent* capsule = GetCapsuleComponent())
 	{
-		float CapsuleHeight = inCharacterDefinition.MeshDefinition.CapsuleHeight;
-		float CapsuleWidth = inCharacterDefinition.MeshDefinition.CapsuleWidth;
-		capsule->SetCapsuleHalfHeight(CapsuleHeight == 0 ? 88.f : CapsuleHeight);
-		capsule->SetCapsuleRadius(CapsuleWidth == 0 ? 34.f : CapsuleWidth);
+		float capsuleHeight = characterDefinition.MeshDefinition.CapsuleHeight;
+		float capsuleWidth = characterDefinition.MeshDefinition.CapsuleWidth;
+		capsule->SetCapsuleHalfHeight(capsuleHeight == 0 ? 88.f : capsuleHeight);
+		capsule->SetCapsuleRadius(capsuleWidth == 0 ? 34.f : capsuleWidth);
 	}
 
-	UpdateMeshes(inCharacterDefinition);
+	SetSkeletalMesh(characterDefinition);
 	
 	// Anim Instance is not automatically reinitialized which can lead to garbage poses
 	// so we manually force the initialize to prevent this.
@@ -130,7 +94,7 @@ void ACNPCCharacter::SetupSkeletalMeshes()
 	}
 }
 
-void ACNPCCharacter::UpdateMeshes(const FClusterCharacterDefinition& characterDefinition)
+void ACNPCCharacter::SetSkeletalMesh(const FClusterCharacterDefinition& characterDefinition)
 {
 	// Update the Skeletal Meshes
 	USkeletalMeshComponent* meshComponent = GetSkeletalMeshComponent();
@@ -148,11 +112,6 @@ void ACNPCCharacter::UpdateMeshes(const FClusterCharacterDefinition& characterDe
 void ACNPCCharacter::UpdateSkeletalMesh(USkeletalMeshComponent* skeletalMeshComponent, TSoftObjectPtr<USkeletalMesh> softSkeletalMeshPtr)
 {
 	USkeletalMesh* skeletalMesh = softSkeletalMeshPtr.LoadSynchronous();
-
-	if (skeletalMesh && ClusterCharacterData && ClusterCharacterData->RayTracingMinLOD >= 0)
-	{
-		skeletalMesh->SetRayTracingMinLOD(ClusterCharacterData->RayTracingMinLOD);
-	}
 
 	UWorld* world = skeletalMeshComponent->GetWorld();
 	if (skeletalMeshComponent->bUseRefPoseOnInitAnim && world)
@@ -182,11 +141,6 @@ USkeletalMeshComponent* ACNPCCharacter::GetSkeletalMeshComponent()
 	return GetMesh();
 }
 
-UDataAsset* ACNPCCharacter::GetCurrentLocomotionAnimSet() const
-{
-	return CharacterDefinition.LocomotionAnimSet.LoadSynchronous();
-}
-
 void ACNPCCharacter::OnGetOrSpawn(FMassEntityManager* entitySubsystem, const FMassEntityHandle massAgent)
 {
 	if (entitySubsystem && entitySubsystem->IsEntityActive(massAgent))
@@ -197,12 +151,19 @@ void ACNPCCharacter::OnGetOrSpawn(FMassEntityManager* entitySubsystem, const FMa
 			{
 				charMovement->Velocity = massVelocityFragment->Value;
 			}
-		}
-
+		}			  
+		
+		// I implemented GetConstSharedFragment in mass
+		const FClusterDataAssetSharedFragment* clusterDataAssetSharedFragment = entitySubsystem->GetConstSharedFragment<FClusterDataAssetSharedFragment>();
+		
 		FClusterVisualizationFragment* visualizationFragment = entitySubsystem->GetFragmentDataPtr<FClusterVisualizationFragment>(massAgent);
-		if (visualizationFragment)
+		
+		if (visualizationFragment && 
+			clusterDataAssetSharedFragment &&
+			clusterDataAssetSharedFragment->ClusterDefinitionData &&
+			clusterDataAssetSharedFragment->ClusterDefinitionData->CharacterDefinitionList.IsValidIndex(visualizationFragment->CharacterDefinitionID))
 		{
-			BuildCharacter();
+			BuildCharacterFromDefinition(clusterDataAssetSharedFragment->ClusterDefinitionData->CharacterDefinitionList[visualizationFragment->CharacterDefinitionID]);
 		}
 	}
 }
