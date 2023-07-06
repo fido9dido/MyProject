@@ -4,6 +4,8 @@
 #include <GameFramework/CharacterMovementComponent.h>
 #include <GameFramework/Character.h>
 #include <MassNavigationTypes.h>
+#include "GlobalTypes.h"
+#include <Characters/Shared/CCharacterMovementComponent.h>
 
 UCClusterAnimationInstance::UCClusterAnimationInstance(const FObjectInitializer& objectInitializer)
 	: Super(objectInitializer)
@@ -90,6 +92,11 @@ void UCClusterAnimationInstance::NativePostEvaluateAnimation()
 	Super::NativePostEvaluateAnimation();
 	// Leaving this here to find crowd's post evals easily in perf captures
 	QUICK_SCOPE_CYCLE_COUNTER(STAT_UCClusterAnimationInstance_NativePostEvaluateAnimation);
+}
+
+void UCClusterAnimationInstance::SetLocomotionState(const ECLocomotionState locomotionState)
+{
+	LocomotionState = locomotionState;
 }
 
 void UCClusterAnimationInstance::GetMoveState(EMassMovementAction& OutCurrentMovementAction, EMassMovementAction& OutPreviousMovementAction) const

@@ -4,7 +4,7 @@
 
 #include "MassEntityTypes.h"
 #include "MassStateTreeTypes.h"
-#include <Fragments/NavMeshFragment.h>
+#include <Fragments/PointoOfInterestsFragment.h>
 #include "FindNavMeshWanderTarget.generated.h"
 
 /**
@@ -12,7 +12,7 @@
  */
 
 USTRUCT()
-struct MYPROJECT_API FFindNavMeshTargetInstanceData
+struct MASSMODULE_API FFindNavMeshTargetInstanceData
 {
 	GENERATED_BODY()
 
@@ -23,7 +23,7 @@ struct MYPROJECT_API FFindNavMeshTargetInstanceData
 
  // Find a random point near the point of interest
 USTRUCT(meta = (DisplayName = "Find NavMesh Wander Target"))
-struct MYPROJECT_API FFindNavMeshWanderTarget: public FMassStateTreeTaskBase
+struct MASSMODULE_API FFindNavMeshWanderTarget: public FMassStateTreeTaskBase
 {
 	GENERATED_BODY()
 

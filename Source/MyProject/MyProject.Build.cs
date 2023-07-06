@@ -9,46 +9,43 @@ public class MyProject : ModuleRules
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PublicDependencyModuleNames.AddRange(new string[] {
+
+        });
+
+        PrivateDependencyModuleNames.AddRange(new string[]
+        {
             "Core"
             ,"CoreUObject"
-            ,"Engine"
             ,"InputCore"
             ,"EnhancedInput"
             ,"StructUtils"
 
-            ,"GeometryScriptingCore"
-            ,"GeometryScriptingEditor"
-
-            ,"MassRepresentation"
-            ,"MassEntity"
-            ,"MassSimulation"
-            ,"MassCommon"
-            ,"MassNavigation"
-            ,"MassCrowd"
-            ,"MassSignals"
-            ,"MassAIBehavior"
-            ,"MassActors"
-            ,"MassMovement"
-            ,"MassLOD"
-
-            ,"ControlRig"
             ,"RigVM"
-            ,"MotionWarping"
             ,"DeveloperSettings"
             ,"ContextualAnimation"
-            ,"AnimGraphRuntime"
 
-            ,"StateTreeModule"
-            ,"StateTreeEditorModule"
+            ,"MassCrowd"
+            ,"MassEntity"
+            ,"MassActors"
+            ,"MassLOD"
+            ,"MassCommon"
+            ,"MassMovement"
+            ,"MassSimulation"
+            ,"MassAIBehavior"
+            ,"MassNavigation"
+            ,"MassRepresentation"
+            ,"SmartObjectsModule"
 
+            ,"GlobalsModule"
+            ,"MassModule"
 
-            ,"NavigationSystem"
-            ,"AIModule"
         });
 
-        PrivateDependencyModuleNames.AddRange(new string[] { });
-
-        PublicIncludePaths.AddRange(new string[] { ModuleDirectory + "/Public/Components/" });
+        PublicIncludePaths.AddRange(new string[] {
+            ModuleDirectory + "/Public/Components/"
+            ,GetModuleDirectory("MassModule") + "/Public/"
+            ,GetModuleDirectory("GlobalsModule") + "/Public/"
+        });
 
         // Uncomment if you are using Slate UI
         // PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

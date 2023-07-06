@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "MassCommonFragments.h"
 
-#include "Globals/GlobalTypes.h"
+#include "GlobalTypes.h"
 #include "LocomotionFragment.generated.h"
 
 

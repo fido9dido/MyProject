@@ -19,6 +19,7 @@ UCClusterUpdateProcessor::UCClusterUpdateProcessor() : EntityQuery(*this)
 	ExecutionOrder.ExecuteInGroup = UE::Mass::ProcessorGroupNames::Behavior;
 	ExecutionOrder.ExecuteAfter.Add(UE::Mass::ProcessorGroupNames::Avoidance);
 	ExecutionOrder.ExecuteAfter.Add(TEXT("MassStateTreeProcessor"));
+	ExecutionOrder.ExecuteAfter.Add(TEXT("CNavMeshPathFollowProcessor"));
 	bRequiresGameThreadExecution = true;
 }
 

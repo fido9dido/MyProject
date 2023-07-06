@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AI/Tasks/NavMeshPathFollowTask.h"
+#include "Tasks/NavMeshPathFollowTask.h"
 #include <MassStateTreeExecutionContext.h>
 #include <NavigationSystem.h>
 #include <StateTreeLinker.h>
-#include "Globals/CUtility.h"
+#include "CUtility.h"
 #include "NavigationPath.h"
 #include <AIController.h>
 

@@ -9,7 +9,7 @@
 #include "NavMeshFragment.generated.h"
 
 USTRUCT()
-struct MYPROJECT_API FNavMeshFragment : public FMassFragment
+struct MASSMODULE_API FNavMeshFragment : public FMassFragment
 {
 	GENERATED_BODY()
 
@@ -37,7 +37,7 @@ public:
 };
 
 UCLASS()
-class MYPROJECT_API UCNavMeshFragmentInitializer : public UMassObserverProcessor
+class MASSMODULE_API UCNavMeshFragmentInitializer : public UMassObserverProcessor
 {
 	GENERATED_BODY()
 
@@ -51,24 +51,4 @@ protected:
 protected:
 	FMassEntityQuery EntityQuery;
 
-};
-
-USTRUCT()
-struct MYPROJECT_API FPointoOfInterestsSharedFragment : public FMassSharedFragment
-{
-	GENERATED_BODY()
-
-// Temporarily public
-public:
-	// this is the MassSpawner Location, visible for debugging purposes
-	UPROPERTY(VisibleAnywhere)
-	FVector Location;
-	
-	UPROPERTY(EditAnywhere)
-	float Radius = 1000.f;
-public:
-	FPointoOfInterestsSharedFragment() = default;
-
-	const FVector& GetLocation() const { return Location; }
-	const float& GetRadius() const { return Radius; }
 };

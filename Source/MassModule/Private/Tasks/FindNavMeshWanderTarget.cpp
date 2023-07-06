@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AI/Tasks/FindNavMeshWanderTarget.h"
+#include "Tasks/FindNavMeshWanderTarget.h"
 #include <MassStateTreeExecutionContext.h>
 #include <NavigationSystem.h>
 #include <StateTreeLinker.h>

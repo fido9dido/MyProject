@@ -3,13 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include <Characters/Shared/CCharacterMovementComponent.h>
-#include "Globals/GlobalTypes.h"
+
+#include <GlobalTypes.h>
 #include "CClusterAnimationInstance.generated.h"
 
-class ACNPCCharacter;
-class UCharacterMovementComponent;
-class UAnimSetLocomotion;
 
 UCLASS()
 class UCClusterAnimationInstance : public UAnimInstance
@@ -18,12 +15,11 @@ class UCClusterAnimationInstance : public UAnimInstance
 
 protected:
 
+	UPROPERTY(Transient, BlueprintReadWrite, Category = "References")
+	TObjectPtr<class ACharacter> Character;
 
 	UPROPERTY(Transient, BlueprintReadWrite, Category = "References")
-	TObjectPtr<ACharacter> Character;
-
-	UPROPERTY(Transient, BlueprintReadWrite, Category = "References")
-	TObjectPtr<UCCharacterMovementComponent> MovementComponent;
+	TObjectPtr<class UCCharacterMovementComponent> MovementComponent;
 
 	UPROPERTY(Transient, EditAnywhere, BlueprintReadWrite, Category = "Essential Data")
 	FVector Velocity;
@@ -63,7 +59,7 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	virtual void NativePostEvaluateAnimation() override;
 
-	void SetLocomotionState(const ECLocomotionState locomotionState) { LocomotionState = locomotionState; }
+	void SetLocomotionState(const ECLocomotionState locomotionState);
 
 	UFUNCTION(BlueprintPure, Category = "Locomotion")
 	void GetMoveState(EMassMovementAction& OutCurrentMovementAction, EMassMovementAction& OutPreviousMovementAction) const;

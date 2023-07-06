@@ -15,6 +15,16 @@
 				"ControlRig",
 				"StateTreeModule"
 			]
+		},
+		{
+			"Name": "MassModule",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "GlobalsModule",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [

@@ -16,7 +16,7 @@
 #include "NavMeshPathFollowTask.generated.h"
 
 USTRUCT()
-struct MYPROJECT_API FMoveTaskInstanceData
+struct MASSMODULE_API FMoveTaskInstanceData
 {
 	GENERATED_BODY()
 
@@ -35,7 +35,7 @@ struct MYPROJECT_API FMoveTaskInstanceData
  */
 
 USTRUCT(meta = (DisplayName = "NavMesh Path Follow"))
-struct MYPROJECT_API FNavMeshPathFollowTask : public FMassStateTreeTaskBase
+struct MASSMODULE_API FNavMeshPathFollowTask : public FMassStateTreeTaskBase
 {
 	GENERATED_BODY()
 

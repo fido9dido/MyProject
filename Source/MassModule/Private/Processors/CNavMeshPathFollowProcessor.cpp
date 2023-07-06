@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Systems/CNavMeshPathFollowProcessor.h"
+#include "Processors/CNavMeshPathFollowProcessor.h"
 #include <MassCommonTypes.h>
 #include "Fragments/NavMeshFragment.h"
 #include <MassMovementFragments.h>
@@ -13,7 +13,6 @@ UCNavMeshPathFollowProcessor::UCNavMeshPathFollowProcessor() : EntityQuery(*this
 	bAutoRegisterWithProcessingPhases = true;
 	ExecutionFlags = (int32)(EProcessorExecutionFlags::Client | EProcessorExecutionFlags::Standalone);
 	ExecutionOrder.ExecuteInGroup = UE::Mass::ProcessorGroupNames::Movement;
-	ExecutionOrder.ExecuteBefore.Add(TEXT("CClusterUpdateProcessor"));
 	bRequiresGameThreadExecution = true;
 }
 

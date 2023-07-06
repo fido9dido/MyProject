@@ -12,7 +12,7 @@
 #include "NavMeshStandTask.generated.h"
 
 USTRUCT()
-struct MYPROJECT_API FStandTaskInstanceData
+struct MASSMODULE_API FStandTaskInstanceData
 {
 	GENERATED_BODY()
 
@@ -25,7 +25,7 @@ struct MYPROJECT_API FStandTaskInstanceData
 
 // Similar behaviour to ZG Stand
 USTRUCT(meta = (DisplayName = "NavMesh Stand"))
-struct MYPROJECT_API FNavMeshStandTask : public FMassStateTreeTaskBase
+struct MASSMODULE_API FNavMeshStandTask : public FMassStateTreeTaskBase
 {
 	GENERATED_BODY()
 

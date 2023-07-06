@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include <MassEntityTraitBase.h>
-#include "Fragments/NavMeshFragment.h"
+#include "Fragments/PointoOfInterestsFragment.h"
 #include "CNavMeshTrait.generated.h"
 
 UCLASS()

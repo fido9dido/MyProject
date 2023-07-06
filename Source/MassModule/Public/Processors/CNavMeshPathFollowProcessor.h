@@ -7,7 +7,7 @@
 #include "CNavMeshPathFollowProcessor.generated.h"
 
 UCLASS()
-class MYPROJECT_API UCNavMeshPathFollowProcessor : public UMassProcessor
+class MASSMODULE_API UCNavMeshPathFollowProcessor : public UMassProcessor
 {
 	GENERATED_BODY()
 
