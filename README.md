@@ -23,35 +23,40 @@ Play the editor
 The spawned Charachters will go to gather resources and deposit it in the structure
 
 I Implemented these function in the engine, you need them to be able to compile
+ 
+   	bool USmartObjectSubsystem::UnMarkOccupiedSlot(const FSmartObjectClaimHandle& ClaimHandle)
+  	{
+	
+ 	 	FSmartObjectRuntime* SmartObjectRuntime = nullptr;
+ 	 	FSmartObjectRuntimeSlot* Slot = nullptr;
+ 	 	FSmartObjectSlotHandle SlotHandle = ClaimHandle.SlotHandle;
+	
+	 	if (!ClaimHandle.IsValid())
+	 	{
+		 	return false;
+	 	}
+	
+	 	if (!GetValidatedMutableRuntimeAndSlot(SlotHandle, SmartObjectRuntime, Slot, ANSI_TO_TCHAR(__FUNCTION__)))
+	 	{
+		 	return false;
+	 	}
 
-bool USmartObjectSubsystem::UnMarkOccupiedSlot(const FSmartObjectClaimHandle& ClaimHandle)
-{
-	FSmartObjectRuntime* SmartObjectRuntime = nullptr;
-	FSmartObjectRuntimeSlot* Slot = nullptr;
-	FSmartObjectSlotHandle SlotHandle = ClaimHandle.SlotHandle;
-	if (!ClaimHandle.IsValid())
-	{
-		return false;
-	}
-	if (!GetValidatedMutableRuntimeAndSlot(SlotHandle, SmartObjectRuntime, Slot, ANSI_TO_TCHAR(__FUNCTION__)))
-	{
-		return false;
-	}
+	 	if (Slot->GetState() == ESmartObjectSlotState::Claimed)
+	 	{
+	 		return true;
+	 	}
 
-	if (Slot->GetState() == ESmartObjectSlotState::Claimed)
-	{
-		return true;
-	}
+	 	if (ensureMsgf(Slot->GetState() == ESmartObjectSlotState::Occupied ||
+		 	Slot->GetState() == ESmartObjectSlotState::Claimed
+		 	, TEXT("Should have been occupied first: %s"), *LexToString(ClaimHandle)))
+	 	{
+		 	Slot->State = ESmartObjectSlotState::Claimed;
+		 	return true;
+	 	}
+	 	return false;
 
-	if (ensureMsgf(Slot->GetState() == ESmartObjectSlotState::Occupied ||
-		Slot->GetState() == ESmartObjectSlotState::Claimed
-		, TEXT("Should have been occupied first: %s"), *LexToString(ClaimHandle)))
-	{
-		Slot->State = ESmartObjectSlotState::Claimed;
-		return true;
-	}
-	return false;
-}
+  	}
+ 
 
 MassEntityManager.h
 
