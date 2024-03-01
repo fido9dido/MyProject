@@ -34,13 +34,10 @@ private:
 	TObjectPtr<UCommonActivatableWidgetStack> GameLayer;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget, AllowPrivateAccess = "true"))
-
 	TObjectPtr<UCommonActivatableWidgetStack> ModalLayer;
 	
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget, AllowPrivateAccess = "true"))
 	TObjectPtr<UCommonActivatableWidgetStack> MenuLayer;
-
-	bool bIsDormant = false;
 
 	// The registered layers for the primary layout.
 	UPROPERTY(Transient, meta = (Categories = "UI.Layer"))
@@ -49,8 +46,10 @@ private:
 	// Lets us keep track of all suspended input tokens so that multiple async UIs can be loading and we correctly suspend
 	// for the duration of all of them.
 	TArray<FName> SuspendInputTokens;
-public:
 
+	bool bIsDormant = false;
+
+public:
 	class UCHUDWidget* GetHud();
 	// Get the layer widget for the given layer tag.
 	UCommonActivatableWidgetContainerBase* GetLayerWidget(FGameplayTag layerName);

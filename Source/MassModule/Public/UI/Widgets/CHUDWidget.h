@@ -14,10 +14,6 @@ class MASSMODULE_API UCHUDWidget : public UCBaseActivatableWidget
 {
 	GENERATED_BODY()	
 
-public:
-	UPROPERTY(meta = (BindWidget))
-	TSoftObjectPtr<class UCStructureListWidget> StructureListWidget;
-
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSoftClassPtr<UCommonActivatableWidget> EscapeMenuClass;
@@ -25,12 +21,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSoftClassPtr<UCommonActivatableWidget> StructureMenuClass;
 
+private:
+	UPROPERTY(meta = (BindWidget))
+	TSoftObjectPtr<class UCStructureListWidget> StructureListWidget;
+
 public:
 	UCHUDWidget(const FObjectInitializer& ObjectInitializer);
 	
 	//~ Begin UUserWidget
 	void NativeOnInitialized() override;
 	//~ End UUserWidget
+	
+	void StructureList(const TSoftObjectPtr<class UCStructureListWidget> structureListWidget);
 protected:
 	void PopulateStructureList();
 	void HandleEscapeAction();

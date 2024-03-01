@@ -28,8 +28,8 @@ struct MASSMODULE_API FFindNavMeshWanderTargetTask: public FMassStateTreeTaskBas
 	GENERATED_BODY()
 private:
 	using FInstanceDataType = FFindNavMeshTargetInstanceData;
-
 	TStateTreeExternalDataHandle<FPointoOfInterestsSharedFragment> PointOfInterestsSharedHandle;
+
 protected:
 	virtual bool Link(FStateTreeLinker& Linker) override;
 	virtual const UStruct* GetInstanceDataType() const override { return FInstanceDataType::StaticStruct(); };

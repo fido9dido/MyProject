@@ -14,7 +14,6 @@ class MASSMODULE_API UCDepositResourceDefinition : public USmartObjectMassBehavi
 
 public:
 	virtual void Activate(struct FMassCommandBuffer& CommandBuffer, const struct FMassBehaviorEntityContext& EntityContext) const override;
-
 	virtual void Deactivate(struct FMassCommandBuffer& CommandBuffer, const struct FMassBehaviorEntityContext& EntityContext) const override;
 
 };

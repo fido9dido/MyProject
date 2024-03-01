@@ -15,6 +15,5 @@ class MASSMODULE_API ACMassSpawner : public AMassSpawner
 	GENERATED_BODY()
 public:
 	
-	
 	virtual void BeginPlay() override;
 };

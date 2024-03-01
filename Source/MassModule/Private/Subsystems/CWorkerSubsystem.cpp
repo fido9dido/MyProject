@@ -19,43 +19,25 @@ void UCWorkerSubsystem::OnBeginPlay(UWorld& world)
 	EntityManager = &entitySubsystem->GetMutableEntityManager();
 }
 
-FMassEntityHandle UCWorkerSubsystem::SpawnWorker(const FMassEntityHandle& structureHandle)
-{
-	UCGameSettings* gameSettings = GetMutableDefault<UCGameSettings>();
-	TArray<FMassEntityHandle> result;
-	ensure(GetWorld());
 
-	if (UWorld* world = GetWorld())
-	{
-		FTransformFragment& transformFragment = EntityManager->GetFragmentDataChecked<FTransformFragment>(structureHandle);
-		FTransform spawnLocation = transformFragment.GetTransform();
-		spawnLocation.AddToTranslation(FVector(0.f, 50.f, 0.f));
-		TArray<FTransform> structureTransform({ spawnLocation });
-
-		result = FUtil::SpawnEntity(gameSettings->WorkerEntityAsset.LoadSynchronous(), *world, 1, structureTransform);
-	}
-
-	return result.Pop();
-}
-
-void UCWorkerSubsystem::AddWorkers(TArray<FMassEntityHandle>& newWorkers)
+void UCWorkerSubsystem::AddWorkerList(TArray<FMassEntityHandle>& newWorkers)
 {
 	while (!newWorkers.IsEmpty())
 	{
-		IdleWorkers.Emplace(newWorkers.Pop());
+		IdleWorkerList.Emplace(newWorkers.Pop());
 	}
 }
 
 void UCWorkerSubsystem::AddWorker(const FMassEntityHandle& newWorker)
 {
-	IdleWorkers.Emplace(newWorker);
+	IdleWorkerList.Emplace(newWorker);
 }
 
-bool UCWorkerSubsystem::AssignWorkerToStructure(FMassEntityHandle& structureHandle)
+bool UCWorkerSubsystem::AssignWorkerToStructure(const FMassEntityHandle& structureHandle)
 {
-	if (IdleWorkers.IsEmpty()) 
+	if (IdleWorkerList.IsEmpty())
 	{
-		IdleWorkers.Emplace(SpawnWorker(structureHandle)); 
+		IdleWorkerList.Emplace(SpawnWorker(structureHandle));
 	}
 
 	FStructureFragment* structureFragment = EntityManager->GetFragmentDataPtr<FStructureFragment>(structureHandle);
@@ -64,8 +46,8 @@ bool UCWorkerSubsystem::AssignWorkerToStructure(FMassEntityHandle& structureHand
 		return false; 
 	}
 
-	FMassEntityHandle workerHandle = IdleWorkers.Pop();
-	ActiveWorkers.Emplace(workerHandle);
+	FMassEntityHandle workerHandle = IdleWorkerList.Pop();
+	ActiveWorkerList.Emplace(workerHandle);
 
 	structureFragment->WorkersList.Emplace(workerHandle);
 
@@ -74,12 +56,13 @@ bool UCWorkerSubsystem::AssignWorkerToStructure(FMassEntityHandle& structureHand
 	{
 		return false;
 	}
+
 	workerFragment->WorkplaceData.StructureHandle = structureHandle;
 	EntityManager->AddTagToEntity(workerHandle, FAddWorkerToStructureTag::StaticStruct());
 	return true;
 }
 
-bool UCWorkerSubsystem::RemoveWorkerFromStructure(FMassEntityHandle& structureHandle, FMassEntityHandle& workerHandle)
+bool UCWorkerSubsystem::RemoveWorkerFromStructure(const FMassEntityHandle& structureHandle, FMassEntityHandle& workerHandle)
 {
 //	bool bStructureExists = StructureWorkerMap.Contains(structureHandle);
 	//if (bStructureExists)
@@ -102,7 +85,21 @@ bool UCWorkerSubsystem::RemoveWorkerFromStructure(FMassEntityHandle& structureHa
 	return false;
 }
 
-void UCWorkerSubsystem::RemoveWorkerFromStructure(FMassEntityHandle& structureHandle)
+FMassEntityHandle UCWorkerSubsystem::SpawnWorker(const FMassEntityHandle& structureHandle)
 {
-	
+	UCGameSettings* gameSettings = GetMutableDefault<UCGameSettings>();
+	TArray<FMassEntityHandle> result;
+	ensure(GetWorld());
+
+	if (UWorld* world = GetWorld())
+	{
+		FTransformFragment& transformFragment = EntityManager->GetFragmentDataChecked<FTransformFragment>(structureHandle);
+		FTransform spawnLocation = transformFragment.GetTransform();
+		spawnLocation.AddToTranslation(FVector(0.f, 50.f, 0.f));
+		TArray<FTransform> structureTransform({ spawnLocation });
+
+		result = FUtil::SpawnEntity(gameSettings->WorkerEntityAsset.LoadSynchronous(), *world, 1, structureTransform);
+	}
+
+	return result.Pop();
 }

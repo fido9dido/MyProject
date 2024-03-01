@@ -24,13 +24,3 @@ FSmartObjectHandle ACSmartObjectActor::GetRegisteredHandle()
 {
 	return SmartObjectComponent->GetRegisteredHandle();
 }
-
-void ACSmartObjectActor::NotifyActorOnClicked(FKey ButtonPressed)
-{
-	Super::NotifyActorOnClicked();
-}
-
-void ACSmartObjectActor::BeginPlay()
-{
-	Super::BeginPlay();
-}

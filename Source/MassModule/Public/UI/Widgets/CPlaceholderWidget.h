@@ -24,7 +24,6 @@ class MASSMODULE_API UCPlaceholderWidget : public UDynamicEntryBoxBase
 	GENERATED_BODY()
 
 public:
-
 	DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(TSubclassOf<UUserWidget>, FOnGetWidgetClassForData, UObject*, DataItem);
 	DECLARE_DYNAMIC_DELEGATE_TwoParams(FOnConfigureWidgetForData, UUserWidget*, Widget, UObject*, DataItem);
 
@@ -40,7 +39,6 @@ protected:
 	FOnConfigureWidgetForData ConfigureWidgetForData;
 
 public:
-
 	UCPlaceholderWidget(const FObjectInitializer& ObjectInitializer);
 
 	//~UWidget interface

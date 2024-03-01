@@ -48,7 +48,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	float FollowTime; // For how long it has been pressed
 
-
 public:
 	ACTopDownPlayerController();
 

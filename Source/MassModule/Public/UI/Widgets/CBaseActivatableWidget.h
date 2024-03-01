@@ -31,6 +31,7 @@ protected:
 	/** The desired mouse behavior when the game gets input. */
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	EMouseCaptureMode GameMouseCaptureMode = EMouseCaptureMode::CapturePermanently;
+	
 	/** Show or Hide Cursor. */
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	bool bHideCursorDuringViewportCapture = false;

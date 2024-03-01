@@ -38,12 +38,11 @@ public:
 
 protected:
 	struct FMassEntityManager* EntityManager;
+	struct FStructureFragment* StructureFragment;
+	const class UCStructureDataAsset* StructureData;
 	
 	FMassEntityHandle StructureHandle;
 	
-	const class UCStructureDataAsset* StructureData;
-
-	struct FStructureFragment* StructureFragment;
 public:	  
 	UFUNCTION()
 	void OnClicked(const FMassEntityHandle& structureHandle, const class UCStructureDataAsset* structureData);

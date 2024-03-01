@@ -26,7 +26,6 @@ public:
 protected:
 	//~ Begin UUserWidget
 	virtual void NativeOnInitialized() override;
-	virtual void NativeConstruct() override;
 	//~ End UUserWidget
 	
 	//~ Begin IUserObjectListEntry

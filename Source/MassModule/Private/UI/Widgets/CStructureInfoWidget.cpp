@@ -5,7 +5,7 @@
 #include <Fragments/StructureFragment.h>
 #include "DataAssets/CStructureDataAsset.h"
 #include "Components/Button.h"
-#include <GameSettings/CGameSettings.h>
+//#include <GameSettings/CGameSettings.h>
 #include <Utilities/Util.h>
 #include <MassCommonFragments.h>
 #include "Subsystems/CWorkerSubsystem.h"
@@ -58,6 +58,7 @@ void UCStructureInfoWidget::NativeConstruct()
 
 	UMassEntitySubsystem* entitySubsystem = GetWorld()->GetSubsystem<UMassEntitySubsystem>();
 	EntityManager = &entitySubsystem->GetMutableEntityManager();
+	
 	ExitButton->OnClicked.AddDynamic(this, &UCStructureInfoWidget::OnExitClick);
 	AddWorkerButton->OnClicked.AddDynamic(this, &UCStructureInfoWidget::OnAddWorker);
 	RemoveWorkerButton->OnClicked.AddDynamic(this, &UCStructureInfoWidget::OnRemoveWorker);
@@ -74,8 +75,10 @@ void UCStructureInfoWidget::OnAddWorker()
 	ensure(GetWorld());
 
 	if (!ensure(StructureHandle.IsValid())) { return; }
+
 	UCWorkerSubsystem* workerSubsystem = GetGameInstance()->GetSubsystem<UCWorkerSubsystem>();
 	workerSubsystem->AssignWorkerToStructure(StructureHandle);	
+
 	SynchronizeProperties();
 }
 

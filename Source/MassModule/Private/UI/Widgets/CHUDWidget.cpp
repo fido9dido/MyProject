@@ -25,6 +25,12 @@ void UCHUDWidget::NativeOnInitialized()
 	PopulateStructureList();
 }
 
+void UCHUDWidget::StructureList(const TSoftObjectPtr<class UCStructureListWidget> structureListWidget)
+{
+	if (structureListWidget.IsNull()) { return; }
+	StructureListWidget = structureListWidget;
+}
+
 void UCHUDWidget::PopulateStructureList()
 {
 	UCUISettings* uiSettings = GetMutableDefault<UCUISettings>();

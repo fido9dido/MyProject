@@ -26,7 +26,6 @@ protected:
 	virtual void Execute(FMassEntityManager& EntityManager, FMassExecutionContext& Context) override;
 
 	void Tick(FMassExecutionContext& context);
-
 	bool TrySpawnStructure(FMassExecutionContext& Context, const class UCStructureDataAsset* structureData, const class ACPreviewActor& previewActor);
 
 };

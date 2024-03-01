@@ -98,7 +98,7 @@ EStateTreeRunStatus FNavMeshPathFollowTask::RequestNewPath(FStateTreeExecutionCo
 	const FNavAgentProperties& navAgentProperties = FNavAgentProperties(agentRadius.Radius);
 	const ANavigationData* navigationData = navigationSystem->GetNavDataForProps(navAgentProperties, agentLocation);
 
-	if (!navigationData) 
+	if (!ensure(navigationData)) 
 	{
 		return EStateTreeRunStatus::Failed;
 	}

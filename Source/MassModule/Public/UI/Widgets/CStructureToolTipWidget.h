@@ -25,7 +25,7 @@ public:
 	class UTileView* CostTileView;
 
 public:
-	void SyncData(class UCStructureDataAsset* structureData);
+	void SyncData(const class UCStructureDataAsset* structureData);
 	void SetName(FText name);
 	void SetDescription(FText description);
 	

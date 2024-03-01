@@ -30,9 +30,4 @@ public:
 
 	struct FSmartObjectHandle GetRegisteredHandle();
 
-	/** Event when this actor is clicked by the mouse when using the clickable interface. */
-	virtual void NotifyActorOnClicked(FKey ButtonPressed = EKeys::LeftMouseButton);
-
-protected:
-	virtual void BeginPlay() override;
 };

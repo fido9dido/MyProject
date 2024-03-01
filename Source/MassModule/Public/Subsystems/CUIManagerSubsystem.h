@@ -21,7 +21,6 @@ private:
 	TObjectPtr<class UCRootLayout> RootLayout = nullptr;
 
 	TMap<FGameplayTag, TObjectPtr<class UCommonActivatableWidget>> PlaceholderMap;
-
 	TArray<TSoftObjectPtr<class UCHUDSlotDefinition>> HUDSlotDefinition;
 
 public:
@@ -37,10 +36,9 @@ public:
 
 	void PushStreamedContentToLayer(FGameplayTag LayerName, TSoftClassPtr<class UCommonActivatableWidget> WidgetClass);
 	void PopContentFromLayer(class UCommonActivatableWidget* activatableWidget);
-
 	void AddSlotWidget(FGameplayTag slotTag, TObjectPtr<class UCommonActivatableWidget>& entryWidget);
-	
 	void RemovePlaceholderWidget(FGameplayTag& slotTag);
+	
 	TObjectPtr<UCommonActivatableWidget>* GetPlaceholderWidget(FGameplayTag& slotTag);
 
 protected:

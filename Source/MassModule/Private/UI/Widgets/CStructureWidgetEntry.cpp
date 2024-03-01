@@ -1,11 +1,12 @@
 #include "UI/Widgets/CStructureWidgetEntry.h"
 #include "UI/Widgets/CStructureToolTipWidget.h"
-#include <DataAssets/CStructureDataAsset.h>
-#include "Components/Image.h"
-#include "CommonTextBlock.h"
-#include <Utilities/MassUtil.h>
+#include "GameSettings/CTopDownPlayerController.h"
+#include "DataAssets/CStructureDataAsset.h"
 #include "Subsystems/CPlacementSubsystem.h"
-#include <GameSettings/CTopDownPlayerController.h>
+#include "Utilities/MassUtil.h"
+
+#include <Components/Image.h>
+#include <CommonTextBlock.h>
 
 void UCStructureWidgetEntry::NativeOnInitialized()
 {
@@ -16,17 +17,14 @@ void UCStructureWidgetEntry::NativeOnInitialized()
 	SetToolTip(entryTooltip);
 }
 
-void UCStructureWidgetEntry::NativeConstruct()
-{
-	Super::NativeConstruct();
-	
-}
-
 void UCStructureWidgetEntry::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
+	if (!ListItemObject) { return; }
+	
 	UCStructureDataAsset* structureData = Cast<UCStructureDataAsset>(ListItemObject);
-	StructureData = structureData;
 	if (!structureData) { return; }
+	
+	StructureData = structureData;
 
 	if (Image)
 	{

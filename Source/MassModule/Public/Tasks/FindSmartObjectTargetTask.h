@@ -34,6 +34,7 @@ struct MASSMODULE_API FFindSmartObjectTargetTask : public FMassStateTreeTaskBase
 
 private:
 	using FInstanceDataType = FFindSmartObjectTargetInstanceData;
+	TStateTreeExternalDataHandle<class USmartObjectSubsystem> SmartObjectSubsystemHandle;
 
 public:
 	FFindSmartObjectTargetTask();
@@ -43,6 +44,4 @@ protected:
 	virtual const UStruct* GetInstanceDataType() const override { return FInstanceDataType::StaticStruct(); };
 	virtual EStateTreeRunStatus EnterState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const override;
 
-private:
-	TStateTreeExternalDataHandle<class USmartObjectSubsystem> SmartObjectSubsystemHandle;
 };

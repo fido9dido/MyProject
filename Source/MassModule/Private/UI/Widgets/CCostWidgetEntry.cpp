@@ -19,8 +19,8 @@ void UCCostWidgetEntry::NativeOnListItemObjectSet(UObject* ListItemObject)
 	if (Name)
 	{
 		Name->SetText(resourceData->Name);
-
 	} 
+
 	if (Count)
 	{
 		Count->SetText(FText::AsNumber(resourceCost->Count));

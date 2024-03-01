@@ -18,12 +18,8 @@ class MASSMODULE_API UCStructureListWidget : public UCommonUserWidget
 public:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UListView> StructureList;
-public:
 
-	void SetListItems(TArray<TObjectPtr<class UCStructureDataAsset>>& items);
-	bool AddStructure(TObjectPtr<UObject> item);
-protected:				  
-	//~ Begin UUserWidget
-	virtual void NativeConstruct() override;
-	//~End UUserWidget
+public:
+	void SetListItems(const TArray<TObjectPtr<class UCStructureDataAsset>>& items);
+	bool AddStructure(const TObjectPtr<UObject> item);
 };

@@ -33,18 +33,19 @@ struct MASSMODULE_API FClaimSmartObjectTask: public FMassStateTreeTaskBase
 {
 	GENERATED_BODY()
 
-	FClaimSmartObjectTask();
 private:
 	using FInstanceDataType = FClaimSmartObjectInstanceData;
+
+	TStateTreeExternalDataHandle<class UMassEntitySubsystem> MassEntitySubsystemHandle;
+	TStateTreeExternalDataHandle<class USmartObjectSubsystem> SmartObjectSubsystemHandle;
+
+	float InteractionCooldown = 0.f;
+public:
+	FClaimSmartObjectTask();
 
 protected:
 	virtual bool Link(FStateTreeLinker& Linker) override;
 	virtual const UStruct* GetInstanceDataType() const override { return FInstanceDataType::StaticStruct(); };
 	virtual EStateTreeRunStatus EnterState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const override;
-	
-private:
-	TStateTreeExternalDataHandle<class UMassEntitySubsystem> MassEntitySubsystemHandle;
-	TStateTreeExternalDataHandle<class USmartObjectSubsystem> SmartObjectSubsystemHandle;
 
-	float InteractionCooldown = 0.f;
 };

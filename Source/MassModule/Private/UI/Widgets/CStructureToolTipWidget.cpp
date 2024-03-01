@@ -8,7 +8,7 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CStructureToolTipWidget)
 
-void UCStructureToolTipWidget::SyncData(UCStructureDataAsset* structureData)
+void UCStructureToolTipWidget::SyncData(const UCStructureDataAsset* structureData)
 {
 	SetName(structureData->Name);
 	SetDescription(structureData->Description);
