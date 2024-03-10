@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "GameSettings/CMainPlayerController.h"
+#include "Characters/CMainPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 
 void ACMainPlayerController::AddPawnInputContext(APawn* toAdd)

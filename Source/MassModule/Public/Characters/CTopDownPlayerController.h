@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Templates/SubclassOf.h"
-#include "GameSettings/CDefaultPlayerController.h"
+#include "Characters/CDefaultPlayerController.h"
 #include "MassEntityTypes.h"
 #include "LogTypes.h"
 #include "CTopDownPlayerController.generated.h"
@@ -33,6 +33,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> SetDestinationTouchAction;
 
+	/** Placement Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> PlacementClickAction;
 protected:
 
 	/** True if the controlled character should navigate to the mouse cursor. */
@@ -63,4 +66,5 @@ protected:
 	void OnTouchTriggered();
 	void OnTouchReleased();
 
+	void OnPlacementTriggered();
 };

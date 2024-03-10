@@ -9,31 +9,45 @@
 
 #include "CDefaultPlayerController.generated.h"
 
+UENUM()
+enum class ECPlayerState
+{
+	Default
+	, Placement
+	, Count
+
+};
 /**
  * 
  */
 UCLASS()
 class MASSMODULE_API ACDefaultPlayerController
 	: public APlayerController
-	, public IControlsOverlay
 	, public IInput
 {
 	GENERATED_BODY()
 protected:
 	UPROPERTY(VisibleAnywhere)
-	bool bInteracting = false;
+	ECPlayerState CurrentState = ECPlayerState::Default;
 private:
+protected:
+	virtual void BeginPlay() override;
+
 public:
 	ACDefaultPlayerController();
 
-	void SetInteractingStatus(bool status);
-
-	void BindPreviewActor(class ACPreviewActor* previewActor);
-
-	UFUNCTION()
-	void OnPreviewActorEnabled();
+	void SetPlayerState(ECPlayerState newState);
 	
 	UFUNCTION()
-	void OnPreviewActorDisabled();
+	void InputModeGameOnly();
+	
+	UFUNCTION()
+	void InputModeDefault();
+
+	UFUNCTION()
+	void OnPlacementEnabled();
+
+	UFUNCTION()
+	void OnPlacementDisabled();
 
 };

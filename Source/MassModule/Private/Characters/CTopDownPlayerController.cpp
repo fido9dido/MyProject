@@ -1,8 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "GameSettings/CTopDownPlayerController.h"
+#include "Characters/CTopDownPlayerController.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "EnhancedInputSubsystems.h"
+#include "Subsystems/CPlacementSubsystem.h"
 
 ACTopDownPlayerController::ACTopDownPlayerController()
 {
@@ -43,6 +44,10 @@ void ACTopDownPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Triggered, this, &ACTopDownPlayerController::OnTouchTriggered);
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Completed, this, &ACTopDownPlayerController::OnTouchReleased);
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &ACTopDownPlayerController::OnTouchReleased);
+		
+		// Setup keyboard input events
+		EnhancedInputComponent->BindAction(PlacementClickAction, ETriggerEvent::Started, this, &ACTopDownPlayerController::OnPlacementTriggered);
+		
 	}
 	else
 	{
@@ -52,14 +57,14 @@ void ACTopDownPlayerController::SetupInputComponent()
 
 void ACTopDownPlayerController::OnInputStarted()
 {
-	if (bInteracting) { return; }
+	if (CurrentState!=ECPlayerState::Default) { return; }
 	StopMovement();
 }
 
 // Triggered every frame when the input is held down
 void ACTopDownPlayerController::OnSetDestinationTriggered()
 {
-	if (bInteracting) { return; }
+	if (CurrentState != ECPlayerState::Default) { return; }
 	// We flag that the input is being pressed
 	FollowTime += GetWorld()->GetDeltaSeconds();
 
@@ -92,7 +97,7 @@ void ACTopDownPlayerController::OnSetDestinationTriggered()
 
 void ACTopDownPlayerController::OnSetDestinationReleased()
 {
-	if (bInteracting) { return; }
+	if (CurrentState != ECPlayerState::Default) { return; }
 	// If it was a short press
 	if (FollowTime <= ShortPressThreshold)
 	{
@@ -114,4 +119,20 @@ void ACTopDownPlayerController::OnTouchReleased()
 {
 	bIsTouch = false;
 	OnSetDestinationReleased();
+}
+
+void ACTopDownPlayerController::OnPlacementTriggered()
+{
+	UCPlacementSubsystem* placementSubsystem = GetGameInstance()->GetSubsystem<UCPlacementSubsystem>();
+	
+	if (!placementSubsystem) { return; }
+	
+	if (placementSubsystem->IsEnabled())
+	{
+		placementSubsystem->DisablePlacement();
+	}
+	else 
+	{
+		placementSubsystem->EnablePlacement();
+	}
 }
