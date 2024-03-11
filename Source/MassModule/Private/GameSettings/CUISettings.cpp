@@ -2,12 +2,6 @@
 
 #include "GameSettings/CUISettings.h"
 
-void UCUISettings::PostInitProperties()
-{
-	Super::PostInitProperties();
-
-}
-
 #if WITH_EDITOR
 void UCUISettings::PostEditChangeProperty(FPropertyChangedEvent& propertyChangedEvent)
 {
@@ -27,7 +21,7 @@ TSubclassOf<UUserWidget> UCUISettings::FindSlotOfWithTag(FGameplayTag slotTag)
 	for (TSoftObjectPtr<UCPlaceholderSlotDefinition>& definition : PlaceholderSlotDefinition)
 	{
 		UCPlaceholderSlotDefinition* slot = definition.LoadSynchronous();
-		if (!slot && slot->Widget.IsNull() && slot->SlotTag != slotTag) { continue; }
+		if (!slot || slot->Widget.IsNull() || slot->SlotTag != slotTag) { continue; }
 
 		return slot->Widget.LoadSynchronous();
 

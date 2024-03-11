@@ -1,28 +1,36 @@
 Unreal Engine 5.4.0 - MassECS Sample 
 
-Currently it
+This is MassECS Sample, It's not intended to be a complete game or to behave as one!
 
-*	has spawner to spawn resource
+Currently it has
+
+*	a spawner to spawn resource
 *	whitebox structure works as a query
-*	Basic UI to Spawn Structures and workers on demand
-*	State Tree to claimed and deposit resources
-*	Uses Navigation Mesh for path finding
+*	basic UI to Spawn Structures and workers on demand
+*	state Tree to claimed and deposit resources
+*	navigation Mesh for path finding
 *   UISetting in Project Settings to Add More structures
+*   Press P to enable or disable placement
 
-This is pretty much it for this Sample
-Open Test Map(the default map)
+Open Test Map(or use the default map)
+
 1- Create an Empty Map with NavMesh 
 2- Add a RockSpawner in the Map to spawn resources
 Play the editor 
 
-1- Enable the Preview by clicking on the structure UI(Player movement will be disabled until you spawn) 
-2- Select a place to spawn the structure near the resources within 5000 radius and click again to Spawn
+1- Enable the Preview by pressing P (Player movement will be disabled until you disable it) 
+2- Select Structure and click anywhere on the map to spawn the structure near the resources within 5000 radius(value can be modified)
+3- Keep spawning then Press P to Exit Placement Mode
 3- Click on the spawned structure to open the UI(Player movement will be disabled, until you close the widget)
 4- Click on the + button to add workers, The - button is not implemented
 
 The spawned Charachters will go to gather resources and deposit it in the structure
 
-I Implemented these function in the engine, you need them to be able to compile
+-----------------------------------------------------------------------------------------------
+
+You need to add these functions to the engine
+
+USmartObjectSubsystem.cpp
  
    	bool USmartObjectSubsystem::UnMarkOccupiedSlot(const FSmartObjectClaimHandle& ClaimHandle)
   	{

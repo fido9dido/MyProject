@@ -16,6 +16,7 @@ class MASSMODULE_API ACPreviewActor : public AActor
 	GENERATED_BODY()
 
 public:		
+
 	FOnPreviewEnabled OnPreviewEnabled;
 	FOnPreviewDisabled OnPreviewDisabled;
 
@@ -45,12 +46,15 @@ public:
 	void SetStaticMesh(class UStaticMesh* staticMesh);
 	void SetMaterial(const int32 index, class UMaterialInterface* material);
 	void SetActive(bool value);
-	void SetStructureData(TWeakObjectPtr<UCStructureDataAsset> structureData);
+	void SetStructureData(TWeakObjectPtr<class UCStructureDataAsset> structureData);
 	bool IsStructureDataValid() { return StructureData.IsValid(); }
-	bool IsActive() { return bActive; }
-	bool IsSpawnable() { return bSpawnable; }
 	void SetSpawnable(bool value) { bSpawnable = value; }
+	bool IsSpawnable() { return bSpawnable; }
+	bool IsActive() { return bActive; }
 	void OnEnabled();
 	void OnDisabled();
-	
+
+protected:
+	virtual void BeginPlay() override;
+
 };

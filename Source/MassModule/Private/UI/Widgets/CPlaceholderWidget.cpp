@@ -86,7 +86,7 @@ void UCPlaceholderWidget::OnAddOrRemoveWidget(ECPlaceholderAction action)
 {
 	UCUISettings* uiSettings = GetMutableDefault<UCUISettings>();
 	TSubclassOf<UUserWidget> widgetClass = uiSettings->FindSlotOfWithTag(PlaceholderTag);
-	if (!ensure(widgetClass)) { return; }
+	if (!ensureMsgf(widgetClass, TEXT("PlaceHolder %s doesn't exist in UISettings in Project Settings"), *PlaceholderTag.GetTagName().ToString())) { return; }
 	UCUIManagerSubsystem* uiManagerSubsystem = GetGameInstance()->GetSubsystem<UCUIManagerSubsystem>();
 
 	if (action == ECPlaceholderAction::Add)
@@ -95,14 +95,14 @@ void UCPlaceholderWidget::OnAddOrRemoveWidget(ECPlaceholderAction action)
 		TObjectPtr<UCommonActivatableWidget> content= Cast<UCommonActivatableWidget>(CreateEntryInternal(widgetClass));
 		if (content)
 		{
-			uiManagerSubsystem->AddSlotWidget(PlaceholderTag, content);
+			uiManagerSubsystem->AddPlaceholderWidget(PlaceholderTag, content);
 		}
 	}
 	else
 	{
-		if (TObjectPtr<UCommonActivatableWidget>* content = uiManagerSubsystem->GetPlaceholderWidget(PlaceholderTag))
+		if (const TObjectPtr<UCommonActivatableWidget>& content = uiManagerSubsystem->FindPlaceholderWidget(PlaceholderTag))
 		{
-			RemoveEntryInternal(*content);
+			RemoveEntryInternal(content);
 
 		}
 	}

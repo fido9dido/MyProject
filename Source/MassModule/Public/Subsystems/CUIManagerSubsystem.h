@@ -33,13 +33,12 @@ public:
 	
 	const class UCRootLayout* GetRootLayout() const;
 	class UCRootLayout* GetRootLayout();
-
 	void PushStreamedContentToLayer(FGameplayTag LayerName, TSoftClassPtr<class UCommonActivatableWidget> WidgetClass);
 	void PopContentFromLayer(class UCommonActivatableWidget* activatableWidget);
-	void AddSlotWidget(FGameplayTag slotTag, TObjectPtr<class UCommonActivatableWidget>& entryWidget);
+	void AddPlaceholderWidget(FGameplayTag slotTag, TObjectPtr<class UCommonActivatableWidget>& entryWidget);
 	void RemovePlaceholderWidget(FGameplayTag& slotTag);
 	
-	TObjectPtr<UCommonActivatableWidget>* GetPlaceholderWidget(FGameplayTag& slotTag);
+	TObjectPtr<UCommonActivatableWidget> FindPlaceholderWidget(FGameplayTag& slotTag);
 
 protected:
 	void CreateLayoutWidget(class ULocalPlayer* LocalPlayer, TSubclassOf<class UCommonUserWidget> layoutWidgetClass);

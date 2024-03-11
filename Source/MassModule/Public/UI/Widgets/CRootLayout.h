@@ -50,7 +50,6 @@ private:
 	bool bIsDormant = false;
 
 public:
-	class UCHUDWidget* GetHud();
 	// Get the layer widget for the given layer tag.
 	UCommonActivatableWidgetContainerBase* GetLayerWidget(FGameplayTag layerName);
 

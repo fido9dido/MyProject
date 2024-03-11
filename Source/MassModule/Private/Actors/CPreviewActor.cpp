@@ -9,6 +9,7 @@
 #include <Kismet/GameplayStatics.h>
 #include <DataAssets/CStructureDataAsset.h>
 #include <Materials/MaterialInterface.h>
+#include "Subsystems/CPlacementSubsystem.h"
 
 ACPreviewActor::ACPreviewActor()
 {
@@ -21,10 +22,22 @@ ACPreviewActor::ACPreviewActor()
 	BoxComponent->SetBoxExtent(BoxExtent);
 }
 
+void ACPreviewActor::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	UCPlacementSubsystem* placementSubsystem = GetGameInstance()->GetSubsystem<UCPlacementSubsystem>();
+
+	if (ensure(placementSubsystem))
+	{
+		OnPreviewEnabled.AddUObject(this, &ACPreviewActor::OnEnabled);
+		OnPreviewDisabled.AddUObject(this, &ACPreviewActor::OnDisabled);
+	}	
+}
+
 void ACPreviewActor::SetStaticMesh(UStaticMesh* staticMesh)
 {
 	MeshComponent->SetStaticMesh(staticMesh);
-	SetActive(true);
 }	 
 
 void ACPreviewActor::SetMaterial(const int32 index, UMaterialInterface* material)
@@ -37,7 +50,8 @@ void ACPreviewActor::SetActive(bool value)
 	SetActorTickEnabled(value);
 	SetActorHiddenInGame(!value);
 	SetActorEnableCollision(value);
-	this->bActive = value;
+	bActive = value;
+
 }
 
 void ACPreviewActor::SetStructureData(TWeakObjectPtr<UCStructureDataAsset> structureData)
@@ -47,16 +61,15 @@ void ACPreviewActor::SetStructureData(TWeakObjectPtr<UCStructureDataAsset> struc
 
 void ACPreviewActor::OnEnabled()
 {
-	if (!ensureAlwaysMsgf(StructureData.IsValid(), TEXT("Structure Data Is not assigned to PreviewActor")))
+	if (!StructureData.IsValid())
 	{
 		return;
 	}
 
 	SetStaticMesh(StructureData->StaticMesh);
-
 	SetMaterial(0, StructureData->OptionalMaterial);
-	
-	OnPreviewEnabled.Broadcast();
+
+	SetActive(true);
 }
 void ACPreviewActor::OnDisabled()
 {
@@ -64,8 +77,6 @@ void ACPreviewActor::OnDisabled()
 	SetSpawnable(false);
 	
 	StructureData.Reset();
-	OnPreviewDisabled.Broadcast();
-	
 }
 
 void ACPreviewActor::NotifyActorOnClicked(FKey ButtonPressed)

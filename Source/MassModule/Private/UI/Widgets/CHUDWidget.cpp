@@ -2,11 +2,8 @@
 
 #include "UI/Widgets/CHUDWidget.h"
 #include "NativeGameplayTags.h"
-#include "UITag.h"
 #include "Input/CommonUIInputTypes.h"
 #include <Subsystems/CUIManagerSubsystem.h>
-#include <GameSettings/CUISettings.h>
-#include "UI/Widgets/CStructureListWidget.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CHUDWidget)
 
@@ -22,33 +19,6 @@ void UCHUDWidget::NativeOnInitialized()
 	Super::NativeOnInitialized();
 
 	RegisterUIActionBinding(FBindUIActionArgs(FUIActionTag::ConvertChecked(TAG_UI_ACTION_ESCAPE), false, FSimpleDelegate::CreateUObject(this, &ThisClass::HandleEscapeAction)));
-	PopulateStructureList();
-}
-
-void UCHUDWidget::StructureList(const TSoftObjectPtr<class UCStructureListWidget> structureListWidget)
-{
-	if (structureListWidget.IsNull()) { return; }
-	StructureListWidget = structureListWidget;
-}
-
-void UCHUDWidget::PopulateStructureList()
-{
-	UCUISettings* uiSettings = GetMutableDefault<UCUISettings>();
-
-	TArray<TObjectPtr<UCStructureDataAsset>> tempDataList;
-	for (TSoftObjectPtr<UCStructureDataAsset>& structureSoftPtr : uiSettings->StructuretDataList)
-	{
-		UCStructureDataAsset* structureData = structureSoftPtr.LoadSynchronous();
-		if (structureData)
-		{
-			tempDataList.Emplace(structureData);
-		}
-	}
-
-	if (StructureListWidget)
-	{
-		StructureListWidget->SetListItems(tempDataList);
-	}
 }
 
 void UCHUDWidget::HandleEscapeAction()

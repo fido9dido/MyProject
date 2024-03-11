@@ -78,7 +78,7 @@ void UCUIManagerSubsystem::SetRootLayout(UCRootLayout* layout)
 	RootLayout = layout;
 }
 
-void UCUIManagerSubsystem::AddSlotWidget(FGameplayTag slotTag, TObjectPtr<UCommonActivatableWidget>& entryWidget)
+void UCUIManagerSubsystem::AddPlaceholderWidget(FGameplayTag slotTag, TObjectPtr<UCommonActivatableWidget>& entryWidget)
 {
 	if (!slotTag.IsValid() || !entryWidget) { return; }
 
@@ -91,9 +91,16 @@ void UCUIManagerSubsystem::RemovePlaceholderWidget(FGameplayTag& slotTag)
 	PlaceholderMap.Remove(slotTag);
 }
 
-TObjectPtr<UCommonActivatableWidget>* UCUIManagerSubsystem::GetPlaceholderWidget(FGameplayTag& slotTag)
+TObjectPtr<UCommonActivatableWidget> UCUIManagerSubsystem::FindPlaceholderWidget(FGameplayTag& slotTag)
 {
-	return PlaceholderMap.Find(slotTag);
+	TObjectPtr<UCommonActivatableWidget>* result = PlaceholderMap.Find(slotTag);
+	
+	if (result)
+	{
+		return *result; 
+	}
+
+	return nullptr;
 }
 
 void UCUIManagerSubsystem::CreateLayoutWidget(ULocalPlayer* localPlayer, TSubclassOf<UCommonUserWidget> layoutWidgetClass)

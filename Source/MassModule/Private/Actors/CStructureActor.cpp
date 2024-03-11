@@ -19,9 +19,11 @@ void ACStructureActor::OnGetOrSpawn(struct FMassEntityManager& entityManager, co
 {
 	StructureHandle = entityHandle;
 
-	UCPlacementSubsystem* PlacementSubsystem = GetGameInstance()->GetSubsystem<UCPlacementSubsystem>();
-	ensure(PlacementSubsystem->SpawnStructureDataMap.Contains(entityHandle));
-	StructureData = PlacementSubsystem->SpawnStructureDataMap.FindAndRemoveChecked(entityHandle);
+	UCPlacementSubsystem* placementSubsystem = GetGameInstance()->GetSubsystem<UCPlacementSubsystem>();
+	
+	ensure(placementSubsystem->SpawnedStructureExists(entityHandle));
+	
+	StructureData = placementSubsystem->GetSpawnedStructureDataMap().FindAndRemoveChecked(entityHandle);
 	MeshComponent->SetStaticMesh(StructureData->StaticMesh);
 	
 	if (StructureData->OptionalMaterial)
@@ -77,10 +79,10 @@ void ACStructureActor::BeginPlay()
 {
 	Super::BeginPlay();
 	UCUIManagerSubsystem* uiManagerSubsystem = GetGameInstance()->GetSubsystem<UCUIManagerSubsystem>();
-	TObjectPtr<UCommonActivatableWidget>* structureInfoWidgetPtr = uiManagerSubsystem->GetPlaceholderWidget(PlaceholderTag);
+	TObjectPtr<UCommonActivatableWidget> structureInfoWidgetPtr = uiManagerSubsystem->FindPlaceholderWidget(PlaceholderTag);
 	if (structureInfoWidgetPtr)
 	{
-		StructureInfoWidget = Cast<UCStructureInfoWidget>(*structureInfoWidgetPtr);
+		StructureInfoWidget = Cast<UCStructureInfoWidget>(structureInfoWidgetPtr);
 		OnStructureClicked.AddDynamic(StructureInfoWidget, &UCStructureInfoWidget::OnClicked);
 	}
 }

@@ -3,22 +3,28 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Templates/SubclassOf.h"
 #include "Characters/CDefaultPlayerController.h"
+#include "Templates/SubclassOf.h"
+#include "GameplayTagContainer.h"
 #include "MassEntityTypes.h"
 #include "LogTypes.h"
+
 #include "CTopDownPlayerController.generated.h"
 
 UCLASS()
-class MASSMODULE_API ACTopDownPlayerController :
-	public ACDefaultPlayerController
+class MASSMODULE_API ACTopDownPlayerController 
+	: public ACDefaultPlayerController
 {
 	GENERATED_BODY()
 
-public:
+protected:
+
+	/** True if the controlled character should navigate to the mouse cursor. */
+	uint32 bMoveToMouseCursor : 1;
+private:
 
 	/** Time Threshold to know if it was a short press */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	float ShortPressThreshold;
 
 	/** MappingContext */
@@ -36,12 +42,11 @@ public:
 	/** Placement Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> PlacementClickAction;
-protected:
+	
+	/** UI Placeholder Tag */
+	UPROPERTY(EditAnywhere, Category = Placement, meta = (AllowPrivateAccess = "true"))
+	FGameplayTag StructureListPlaceholderTag;
 
-	/** True if the controlled character should navigate to the mouse cursor. */
-	uint32 bMoveToMouseCursor : 1;
-
-private:
 	UPROPERTY(VisibleAnywhere)
 	FVector CachedDestination;
 

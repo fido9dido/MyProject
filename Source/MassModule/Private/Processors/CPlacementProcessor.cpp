@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Processors/CPlacementProcessor.h"
-#include "GameSettings/CTopDownPlayerController.h"
+#include "Characters/CTopDownPlayerController.h"
 #include "GameSettings/CGameSettings.h"
 #include "Fragments/PreviewSharedFragment.h"
 #include "Subsystems/CPlacementSubsystem.h"
@@ -19,6 +19,7 @@ UCPlacementProcessor::UCPlacementProcessor() : EntityQuery(*this)
 	bAutoRegisterWithProcessingPhases = true;
 	ExecutionFlags = (int32)(EProcessorExecutionFlags::Client | EProcessorExecutionFlags::Standalone);
 	ExecutionOrder.ExecuteBefore.Add(TEXT("CClusterUpdateProcessor"));
+	ExecutionOrder.ExecuteBefore.Add(TEXT("CNavMeshPathFollowProcessor"));
 
 	bRequiresGameThreadExecution = true;
 }
@@ -26,26 +27,22 @@ UCPlacementProcessor::UCPlacementProcessor() : EntityQuery(*this)
 void UCPlacementProcessor::Initialize(UObject& Owner)
 {
 	Super::Initialize(Owner);
+
 	UWorld* world = GetWorld();
 	PlayerController = Cast<ACDefaultPlayerController>(UGameplayStatics::GetPlayerController(world, 0));
 	PlacementSubsystem = world->GetGameInstance()->GetSubsystem<UCPlacementSubsystem>();
 	
 	UCGameSettings* gameSettings = GetMutableDefault<UCGameSettings>();
-
 	ACPreviewActor* previewActor = world->SpawnActor<ACPreviewActor>(gameSettings->GetPreviewActorClass());
 
 	if (ensureMsgf(previewActor, TEXT("Preview Actor failed to spawn")))
 	{
 		previewActor->SetActive(false);
+		previewActor->OnPreviewEnabled.AddUObject(PlayerController.Get(), &ACDefaultPlayerController::InputModeGameOnly);
+		previewActor->OnPreviewDisabled.AddUObject(PlayerController.Get(), &ACDefaultPlayerController::InputModeDefault);
 	}	 
-	PlayerController->BindPreviewActor(previewActor);
 
 	PlacementSubsystem->SetPreviewActor(previewActor);
-}
-
-void UCPlacementProcessor::PostInitProperties()
-{
-	Super::PostInitProperties();
 }
 
 void UCPlacementProcessor::ConfigureQueries()
@@ -64,7 +61,7 @@ void UCPlacementProcessor::Execute(FMassEntityManager& EntityManager, FMassExecu
 void UCPlacementProcessor::Tick(FMassExecutionContext& Context)
 {
 	ACPreviewActor* previewActor = PlacementSubsystem->GetPreviewActor();
-	if (!previewActor) { return; }
+	if (!previewActor || !previewActor->IsActive()) { return; }
 
 	FPreviewSharedFragment& peviewSharedFragment = Context.GetMutableSharedFragment<FPreviewSharedFragment>();
 	UCStructureDataAsset* structureData = peviewSharedFragment.StructureDataWeakPtr.Get();
@@ -72,27 +69,32 @@ void UCPlacementProcessor::Tick(FMassExecutionContext& Context)
 	if (structureData && structureData->IsValid())
 	{		  	
 		FHitResult hitResult;
-		bool bHitSuccessful = PlayerController->GetHitResultUnderCursor(ECollisionChannel::ECC_WorldStatic, true, hitResult);
-		if (!hitResult.IsValidBlockingHit())
-		{
-			bHitSuccessful = false;
-			return; 
-		}
+		
+		if (!GetValidLocation(hitResult)) { return; };
+
 		previewActor->SetActorLocation(hitResult.Location);
 
-		if (previewActor->IsSpawnable())
-		{
+		if (!previewActor->IsSpawnable()) { return; }
 		
-			ensure(TrySpawnStructure(Context, structureData, *previewActor));
-
-			PlayerController->SetInteractingStatus(false);
-
-			previewActor->OnDisabled();
-		}
-		return;
+		TrySpawnStructure(Context, structureData, *previewActor);
 	}
-	if (previewActor->IsActive()) { previewActor->SetActive(false); }
 
+	if (previewActor->IsActive()) 
+	{
+		previewActor->OnPreviewDisabled.Broadcast();
+	}
+}
+
+bool UCPlacementProcessor::GetValidLocation(FHitResult& outHitResult)
+{
+	PlayerController->GetHitResultUnderCursor(ECollisionChannel::ECC_WorldStatic, true, outHitResult);
+	
+	if (!outHitResult.IsValidBlockingHit())
+	{
+		return false;
+	}
+
+	return true;
 }
 
 bool UCPlacementProcessor::TrySpawnStructure(FMassExecutionContext& Context, const UCStructureDataAsset* structureData, const ACPreviewActor& previewActor)
@@ -102,8 +104,7 @@ bool UCPlacementProcessor::TrySpawnStructure(FMassExecutionContext& Context, con
 	TArray<FMassEntityHandle> structureHandle = FMassUtil::SpawnEntity(*structureConfig, GetWorld(), 1, transformList);
 	
 	if (structureHandle.IsEmpty()) { return false; }
-
-	PlacementSubsystem->SpawnStructureDataMap.Add(structureHandle[0], structureData);
+	PlacementSubsystem->AddStructure(structureHandle[0], structureData);
 
 	return true;
 }

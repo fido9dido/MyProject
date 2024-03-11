@@ -6,6 +6,9 @@
 #include <MassEntityTypes.h>
 #include "CPlacementSubsystem.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnPlacementEnabled);
+DECLARE_MULTICAST_DELEGATE(FOnPlacementDisabled);
+
 UCLASS()
 class MASSMODULE_API UCSpawnStructureData : public UObject
 {
@@ -24,8 +27,9 @@ class MASSMODULE_API UCPlacementSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
-
-	TMap<FMassEntityHandle, TObjectPtr<const UCStructureDataAsset>> SpawnStructureDataMap;
+	
+	FOnPlacementEnabled OnPlacementEnabled;
+	FOnPlacementDisabled OnPlacementDisabled;
 
 private:
 
@@ -37,23 +41,32 @@ private:
 
 	TObjectPtr<class ACPreviewActor> PreviewActor = nullptr;
 
+	bool bEnabled = false;
+	
+	//Spawn
+	//map that tempraily hold structure data until it is passed to the corresponding actor
+	TMap<FMassEntityHandle, TObjectPtr<const UCStructureDataAsset>> SpawnedStructureDataMap;
+
 public:
 
+	bool  IsEnabled() { return bEnabled; }
+	class ACPreviewActor* GetPreviewActor() { return PreviewActor.Get(); }
+	void SetPreviewActor(ACPreviewActor* previewActor);
 	FMassEntityHandle& GetPreviewHandle();
 	class UMassEntityConfigAsset* GetPreviewConfig();
-	void SetPreviewHandle(const FMassEntityHandle& previewHandle);
-	
-	//~ Begin USubsystem implementation 
-	/** Implement this for initialization of instances of the system */
-	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-	/** Implement this for deinitialization of instances of the system */
-	virtual void Deinitialize() override;
-	//~ End USubsystem implementation 
-
+	void SetPreviewHandle(const FMassEntityHandle& previewHandle);	
+	void AddStructure(const FMassEntityHandle& structureHandle, const class UCStructureDataAsset* structureData);
 	void SpawnPreviewEntity(UWorld& world);
 	void OnBeginPlay(UWorld& world);
+	void EnablePlacement();
+	void DisablePlacement();
 
-	class ACPreviewActor* GetPreviewActor() { return PreviewActor; }
-	void SetPreviewActor(ACPreviewActor* previewActor);
+	// Spawn 	
+	TMap<FMassEntityHandle, TObjectPtr<const UCStructureDataAsset>>& GetSpawnedStructureDataMap() { return SpawnedStructureDataMap; }
+	bool SpawnedStructureExists(const FMassEntityHandle& structureHandle);
 
+protected:
+	//~ Begin USubsystem implementation 
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	//~ End USubsystem implementation 
 };

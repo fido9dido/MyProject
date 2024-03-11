@@ -1,9 +1,9 @@
 #include "UI/Widgets/CStructureWidgetEntry.h"
 #include "UI/Widgets/CStructureToolTipWidget.h"
-#include "GameSettings/CTopDownPlayerController.h"
+#include "Characters/CTopDownPlayerController.h"
 #include "DataAssets/CStructureDataAsset.h"
-#include "Subsystems/CPlacementSubsystem.h"
 #include "Utilities/MassUtil.h"
+#include "Actors/CPreviewActor.h"
 
 #include <Components/Image.h>
 #include <CommonTextBlock.h>
@@ -42,12 +42,13 @@ FReply UCStructureWidgetEntry::NativeOnMouseButtonUp(const FGeometry& InGeometry
 {
 	Super::NativeOnMouseButtonUp(InGeometry, InMouseEvent);
 
-	ACTopDownPlayerController* playerController = Cast<ACTopDownPlayerController>(GetOwningPlayer());
-	playerController->SetInputMode(FInputModeGameOnly());
-	playerController->SetInteractingStatus(true);
-	
 	UCStructureDataAsset* structureData = StructureData.LoadSynchronous();
-	FMassUtil::SendStructureDataToPreviewEntity(structureData, GetWorld());
-
-	return FReply::Handled();
+	
+	if (structureData)
+	{
+		FMassUtil::SendStructureDataToPreviewEntity(structureData, GetWorld());
+		return FReply::Handled();
+	}
+	
+	return FReply::Unhandled();
 }

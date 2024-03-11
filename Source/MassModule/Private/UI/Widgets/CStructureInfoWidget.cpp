@@ -13,10 +13,10 @@
 #define LOCTEXT_NAMESPACE "StructureText"
 
 UCStructureInfoWidget::UCStructureInfoWidget(const FObjectInitializer& ObjectInitializer)
-: Super(ObjectInitializer) , StructureData(nullptr)
+: Super(ObjectInitializer) 
+, StructureData(nullptr)
 {
 	StructureData = nullptr;
-	DeactivateWidget();
 }
 
 void UCStructureInfoWidget::OnClicked(const FMassEntityHandle& structureHandle,const UCStructureDataAsset* structureData)

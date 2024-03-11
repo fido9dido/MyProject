@@ -6,6 +6,9 @@
 #include "MassObserverProcessor.h"
 #include "CPlacementProcessor.generated.h"
 
+/**
+*	 
+*/
 UCLASS()
 class MASSMODULE_API UCPlacementProcessor : public UMassProcessor
 {
@@ -21,11 +24,11 @@ public:
 	
 protected:
 	virtual void Initialize(UObject& Owner);
-	virtual void PostInitProperties() override;
 	virtual void ConfigureQueries() override;
 	virtual void Execute(FMassEntityManager& EntityManager, FMassExecutionContext& Context) override;
 
 	void Tick(FMassExecutionContext& context);
+	bool GetValidLocation(FHitResult& outHitResult);
 	bool TrySpawnStructure(FMassExecutionContext& Context, const class UCStructureDataAsset* structureData, const class ACPreviewActor& previewActor);
 
 };

@@ -8,20 +8,6 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CRootLayout)
 
-UCHUDWidget* UCRootLayout::GetHud()
-{
-	const TArray<UCommonActivatableWidget*>& widgetList = GameLayer->GetWidgetList();
-
-	for (UCommonActivatableWidget* widget : widgetList)
-	{
-		if (UCHUDWidget* requestedWidget = Cast<UCHUDWidget>(widget))
-		{
-			return requestedWidget;
-		}
-	}
-	return nullptr;
-}
-
 UCommonActivatableWidgetContainerBase* UCRootLayout::GetLayerWidget(FGameplayTag layerName)
 {
 	return Layers.FindRef(layerName);

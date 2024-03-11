@@ -12,9 +12,6 @@ void FMassUtil::SendStructureDataToPreviewEntity(UCStructureDataAsset* structure
 {
 	UCPlacementSubsystem* placementSubsystem = UGameInstance::GetSubsystem<UCPlacementSubsystem>(world->GetGameInstance());
 	if (!placementSubsystem) { return; }
-	
-	FMassEntityHandle& previewHandle = placementSubsystem->GetPreviewHandle();
-	if (!previewHandle.IsValid()) { return; }
 
 	placementSubsystem->GetPreviewActor()->SetStructureData(structureData);
 
@@ -25,8 +22,6 @@ void FMassUtil::SendStructureDataToPreviewEntity(UCStructureDataAsset* structure
 		{
 			previewSharedFragment.StructureDataWeakPtr = structureData;
 		});
-
-	placementSubsystem->GetPreviewActor()->OnEnabled();
 }
 
 TArray<FMassEntityHandle> FMassUtil::SpawnEntity(UMassEntityConfigAsset& entityConfig, UWorld* world, int32 numToSpawn, const TArray<FTransform>& transformList)

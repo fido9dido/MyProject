@@ -5,6 +5,7 @@
 #include "MassEntityTypes.h"
 #include "Utilities/Util.h"
 #include "GameSettings/CGameSettings.h"
+#include "Actors/CPreviewActor.h"
 
 FMassEntityHandle& UCPlacementSubsystem::GetPreviewHandle()
 {
@@ -23,16 +24,9 @@ void UCPlacementSubsystem::SetPreviewHandle(const FMassEntityHandle& previewHand
 	PreviewHandle = previewHandle;
 }
 
-void UCPlacementSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+void UCPlacementSubsystem::AddStructure(const FMassEntityHandle& structureHandle, const UCStructureDataAsset* structureData)
 {
-	Super::Initialize(Collection);
-	UCGameSettings* gameSettings = GetMutableDefault<UCGameSettings>();
-	PreviewConfig = gameSettings->GetPreviewConfig();
-}
-
-void UCPlacementSubsystem::Deinitialize()
-{
-	Super::Deinitialize();
+	SpawnedStructureDataMap.Add(structureHandle, structureData);
 }
 
 void UCPlacementSubsystem::SpawnPreviewEntity(UWorld& world)
@@ -46,9 +40,42 @@ void UCPlacementSubsystem::OnBeginPlay(UWorld& world)
 	SpawnPreviewEntity(world);
 }
 
+void UCPlacementSubsystem::EnablePlacement()
+{
+	OnPlacementEnabled.Broadcast();
+	if (ensure(PreviewActor))
+	{
+		PreviewActor.Get()->OnPreviewEnabled.Broadcast();
+	}
+
+	bEnabled = true;
+}
+
+void UCPlacementSubsystem::DisablePlacement()
+{
+	OnPlacementDisabled.Broadcast();
+
+	if (ensure(PreviewActor))
+	{
+		PreviewActor->OnPreviewDisabled.Broadcast();
+	}
+
+	bEnabled = false;
+}
+
+bool UCPlacementSubsystem::SpawnedStructureExists(const FMassEntityHandle& structureHandle)
+{
+	return SpawnedStructureDataMap.Contains(structureHandle);
+}
+
 void UCPlacementSubsystem::SetPreviewActor(ACPreviewActor* previewActor)
 {
 	PreviewActor = previewActor;
 }
 
-
+void UCPlacementSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+	UCGameSettings* gameSettings = GetMutableDefault<UCGameSettings>();
+	PreviewConfig = gameSettings->GetPreviewConfig();
+}

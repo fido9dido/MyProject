@@ -10,8 +10,6 @@
 
 #include "CDefaultCharacter.generated.h"
 
-class UMotionWarpingComponent;
-
 UCLASS()
 class MASSMODULE_API ACDefaultCharacter : public ACharacter,
 	public IControlsOverlay,

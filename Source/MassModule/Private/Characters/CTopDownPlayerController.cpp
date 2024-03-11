@@ -4,6 +4,8 @@
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "EnhancedInputSubsystems.h"
 #include "Subsystems/CPlacementSubsystem.h"
+#include <Subsystems/CUIManagerSubsystem.h>
+#include "UI/Widgets/CHUDWidget.h"
 
 ACTopDownPlayerController::ACTopDownPlayerController()
 {
@@ -124,15 +126,27 @@ void ACTopDownPlayerController::OnTouchReleased()
 void ACTopDownPlayerController::OnPlacementTriggered()
 {
 	UCPlacementSubsystem* placementSubsystem = GetGameInstance()->GetSubsystem<UCPlacementSubsystem>();
+	UCUIManagerSubsystem* uiManagerSubsystem = GetGameInstance()->GetSubsystem<UCUIManagerSubsystem>();
 	
-	if (!placementSubsystem) { return; }
-	
+	if (!placementSubsystem || !uiManagerSubsystem) { return; }
+	TObjectPtr<UCommonActivatableWidget> widget = uiManagerSubsystem->FindPlaceholderWidget(StructureListPlaceholderTag);
+
 	if (placementSubsystem->IsEnabled())
 	{
 		placementSubsystem->DisablePlacement();
+		
+		if (ensureMsgf(widget, TEXT("Placeholder Widget Doesn't exist")))
+		{
+			widget->DeactivateWidget();
+		}
 	}
 	else 
 	{
 		placementSubsystem->EnablePlacement();
+		
+		if (ensureMsgf(widget, TEXT("Placeholder Widget Doesn't exist")))
+		{
+			widget->ActivateWidget();
+		}
 	}
 }

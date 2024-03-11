@@ -21,10 +21,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSoftClassPtr<UCommonActivatableWidget> StructureMenuClass;
 
-private:
-	UPROPERTY(meta = (BindWidget))
-	TSoftObjectPtr<class UCStructureListWidget> StructureListWidget;
-
 public:
 	UCHUDWidget(const FObjectInitializer& ObjectInitializer);
 	
@@ -32,8 +28,6 @@ public:
 	void NativeOnInitialized() override;
 	//~ End UUserWidget
 	
-	void StructureList(const TSoftObjectPtr<class UCStructureListWidget> structureListWidget);
 protected:
-	void PopulateStructureList();
 	void HandleEscapeAction();
 };

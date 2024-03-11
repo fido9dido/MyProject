@@ -59,7 +59,6 @@ public:
 	TArray<TSoftObjectPtr<UCPlaceholderSlotDefinition>> PlaceholderSlotDefinition;
 
 public:
-	virtual void PostInitProperties() override;
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
