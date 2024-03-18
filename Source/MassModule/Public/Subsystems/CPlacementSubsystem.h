@@ -29,6 +29,7 @@ class MASSMODULE_API UCPlacementSubsystem : public UGameInstanceSubsystem
 public:
 	
 	FOnPlacementEnabled OnPlacementEnabled;
+
 	FOnPlacementDisabled OnPlacementDisabled;
 
 private:
@@ -60,7 +61,7 @@ public:
 	void OnBeginPlay(UWorld& world);
 	void EnablePlacement();
 	void DisablePlacement();
-
+	void InitalizePreviewActor(UCStructureDataAsset* structureData);
 	// Spawn 	
 	TMap<FMassEntityHandle, TObjectPtr<const UCStructureDataAsset>>& GetSpawnedStructureDataMap() { return SpawnedStructureDataMap; }
 	bool SpawnedStructureExists(const FMassEntityHandle& structureHandle);

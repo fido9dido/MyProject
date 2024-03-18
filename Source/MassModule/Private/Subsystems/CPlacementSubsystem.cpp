@@ -43,10 +43,6 @@ void UCPlacementSubsystem::OnBeginPlay(UWorld& world)
 void UCPlacementSubsystem::EnablePlacement()
 {
 	OnPlacementEnabled.Broadcast();
-	if (ensure(PreviewActor))
-	{
-		PreviewActor.Get()->OnPreviewEnabled.Broadcast();
-	}
 
 	bEnabled = true;
 }
@@ -61,6 +57,14 @@ void UCPlacementSubsystem::DisablePlacement()
 	}
 
 	bEnabled = false;
+}
+
+void UCPlacementSubsystem::InitalizePreviewActor(UCStructureDataAsset* structureData)
+{
+	if (!ensure(PreviewActor.Get())) { return; }
+	
+	PreviewActor->SetStructureData(structureData);
+	PreviewActor->OnPreviewEnabled.Broadcast();
 }
 
 bool UCPlacementSubsystem::SpawnedStructureExists(const FMassEntityHandle& structureHandle)

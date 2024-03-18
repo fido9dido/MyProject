@@ -45,7 +45,7 @@ EStateTreeRunStatus FClaimResourceTask::EnterState(FStateTreeExecutionContext& C
 	}
 
 	USmartObjectSubsystem& smartObjectSubsystem = Context.GetExternalData(SmartObjectSubsystemHandle);
-	FSmartObjectClaimHandle claimHandle = smartObjectSubsystem.MarkSlotAsClaimed(instanceData.FoundCandidateSlot.Result.SlotHandle);
+	FSmartObjectClaimHandle claimHandle = smartObjectSubsystem.MarkSlotAsClaimed(instanceData.FoundCandidateSlot.Result.SlotHandle, ESmartObjectClaimPriority::Normal);
 
 	if (!claimHandle.IsValid())
 	{

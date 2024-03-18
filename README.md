@@ -1,6 +1,7 @@
 Unreal Engine 5.4.0 - MassECS Sample 
 
-This is MassECS Sample, It's not intended to be a complete game or to behave as one!
+This is MassECS Sample, to demonstrate how mass works and how to use MassECS with other systems like navigation and smart objects etc
+the functionalities are implemented with that in mind, It's not intended to be a game!
 
 Currently it has
 
@@ -12,10 +13,13 @@ Currently it has
 *   UISetting in Project Settings to Add More structures
 *   Press P to enable or disable placement
 
-Open Test Map(or use the default map)
+create new Map(or use the test map)
+
+Steps to creating an empty Map
 
 1- Create an Empty Map with NavMesh 
-2- Add a RockSpawner in the Map to spawn resources
+2- Add a resource spawner in the map, RockSpawner exists in the editor
+
 Play the editor 
 
 1- Enable the Preview by pressing P (Player movement will be disabled until you disable it) 
@@ -28,7 +32,7 @@ The spawned Charachters will go to gather resources and deposit it in the struct
 
 -----------------------------------------------------------------------------------------------
 
-You need to add these functions to the engine
+You need to add this function to the engine
 
 USmartObjectSubsystem.cpp
  
@@ -65,35 +69,3 @@ USmartObjectSubsystem.cpp
 
   	}
  
-
-MassEntityManager.h
-
-	template<typename T>
-	const T* GetConstSharedFragment()
-	{
-		static_assert(TIsDerivedFrom<T, FMassSharedFragment>::IsDerived, "Given struct doesn't represent a valid Shared fragment type. Make sure to inherit from FMassSharedFragment or one of its child-types.");
-
-		for (FConstSharedStruct& Element : ConstSharedFragments)
-		{
-			if (const T* Data = Element.GetPtr<const T>())
-			{
-				return	Data;
-			}
-		}
-		return nullptr;
-	}
-
-	template<typename T>
-	const T* GetSharedFragment()
-	{
-		static_assert(TIsDerivedFrom<T, FMassSharedFragment>::IsDerived, "Given struct doesn't represent a valid Shared fragment type. Make sure to inherit from FMassSharedFragment or one of its child-types.");
-
-		for (FConstSharedStruct& Element : SharedFragments)
-		{
-			if (const T* Data = Element.GetPtr<const T>())
-			{
-				return	Data;
-			}
-		}
-		return nullptr;
-	}

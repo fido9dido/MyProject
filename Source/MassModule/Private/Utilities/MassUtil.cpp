@@ -13,8 +13,7 @@ void FMassUtil::SendStructureDataToPreviewEntity(UCStructureDataAsset* structure
 	UCPlacementSubsystem* placementSubsystem = UGameInstance::GetSubsystem<UCPlacementSubsystem>(world->GetGameInstance());
 	if (!placementSubsystem) { return; }
 
-	placementSubsystem->GetPreviewActor()->SetStructureData(structureData);
-
+	placementSubsystem->InitalizePreviewActor(structureData);
 	UMassEntitySubsystem* entitySubsystem = UWorld::GetSubsystem<UMassEntitySubsystem>(world);
 	FMassEntityManager& entityManager = entitySubsystem->GetMutableEntityManager();
 	entityManager.ForEachSharedFragment<FPreviewSharedFragment>(

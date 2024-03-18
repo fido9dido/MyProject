@@ -35,7 +35,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UBoxComponent> BoxComponent = nullptr;
 
-	TWeakObjectPtr<class UCStructureDataAsset>	StructureData = nullptr;
+	TObjectPtr<class UCStructureDataAsset>	StructureData = nullptr;
 
 public:
 	ACPreviewActor();
@@ -46,8 +46,8 @@ public:
 	void SetStaticMesh(class UStaticMesh* staticMesh);
 	void SetMaterial(const int32 index, class UMaterialInterface* material);
 	void SetActive(bool value);
-	void SetStructureData(TWeakObjectPtr<class UCStructureDataAsset> structureData);
-	bool IsStructureDataValid() { return StructureData.IsValid(); }
+	void SetStructureData(TObjectPtr<UCStructureDataAsset> structureData);
+	bool IsStructureDataValid();
 	void SetSpawnable(bool value) { bSpawnable = value; }
 	bool IsSpawnable() { return bSpawnable; }
 	bool IsActive() { return bActive; }

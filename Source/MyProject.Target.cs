@@ -8,7 +8,7 @@ public class MyProjectTarget : TargetRules
     {
         Type = TargetType.Game;
         DefaultBuildSettings = BuildSettingsVersion.V5;
-        IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
+        IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_4;
         ExtraModuleNames.Add("MyProject");
         ExtraModuleNames.Add("MassModule");
         ExtraModuleNames.Add("GlobalsModule");

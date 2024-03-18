@@ -29,8 +29,12 @@ void UCPlacementProcessor::Initialize(UObject& Owner)
 	Super::Initialize(Owner);
 
 	UWorld* world = GetWorld();
+	if (!world) { return; }
 	PlayerController = Cast<ACDefaultPlayerController>(UGameplayStatics::GetPlayerController(world, 0));
-	PlacementSubsystem = world->GetGameInstance()->GetSubsystem<UCPlacementSubsystem>();
+	
+	UGameInstance* gameInstance = world->GetGameInstance();
+	if (!gameInstance) { return; }
+	PlacementSubsystem = gameInstance->GetSubsystem<UCPlacementSubsystem>();
 	
 	UCGameSettings* gameSettings = GetMutableDefault<UCGameSettings>();
 	ACPreviewActor* previewActor = world->SpawnActor<ACPreviewActor>(gameSettings->GetPreviewActorClass());

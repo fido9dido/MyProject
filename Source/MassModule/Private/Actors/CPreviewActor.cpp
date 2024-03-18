@@ -54,14 +54,19 @@ void ACPreviewActor::SetActive(bool value)
 
 }
 
-void ACPreviewActor::SetStructureData(TWeakObjectPtr<UCStructureDataAsset> structureData)
+void ACPreviewActor::SetStructureData(TObjectPtr<UCStructureDataAsset> structureData)
 {
 	StructureData = structureData;
 }
 
+bool ACPreviewActor::IsStructureDataValid()
+{
+	return StructureData->IsValid();
+}
+
 void ACPreviewActor::OnEnabled()
 {
-	if (!StructureData.IsValid())
+	if (!StructureData || !StructureData->IsValid())
 	{
 		return;
 	}
@@ -76,7 +81,7 @@ void ACPreviewActor::OnDisabled()
 	SetActive(false);
 	SetSpawnable(false);
 	
-	StructureData.Reset();
+	StructureData = nullptr;
 }
 
 void ACPreviewActor::NotifyActorOnClicked(FKey ButtonPressed)

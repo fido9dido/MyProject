@@ -156,8 +156,7 @@ void ACAgentCharacter::OnGetOrSpawn(FMassEntityManager& entityManager, const FMa
 		}			  
 		
 		// I implemented GetConstSharedFragment in entity Subsystem
-		const FClusterDataAssetSharedFragment* clusterDataAssetSharedFragment = entityManager.GetConstSharedFragment<FClusterDataAssetSharedFragment>();
-		
+		const FClusterDataAssetSharedFragment* clusterDataAssetSharedFragment = entityManager.GetConstSharedFragmentDataPtr<FClusterDataAssetSharedFragment>(massAgent);
 		FClusterVisualizationFragment* visualizationFragment = entityManager.GetFragmentDataPtr<FClusterVisualizationFragment>(massAgent);
 		
 		if (visualizationFragment && 
